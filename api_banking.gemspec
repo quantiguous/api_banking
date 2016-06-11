@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["hello@quantiguous.com"]
 
   spec.summary       = %q{Ruby SDK to Connect to Banks}
-  spec.homepage      = "apibanking.com"
+  spec.homepage      = "http://apibanking.com"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
