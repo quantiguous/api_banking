@@ -33,7 +33,8 @@ To operate this service, in a sandbox environment, you need a client id, client 
 Once you have them, using the gem makes it simple.
 
 
-`require 'api_banking'
+```ruby
+require 'api_banking'
 
 ApiBanking::FundsTransferByCustomerService.configure do |config|
   config.environment = ApiBanking::Environment::YBL::UAT.new(ENV['API_UAT_USER'], ENV['API_UAT_PASSWORD'], ENV['API_UAT_CLIENT_ID'], ENV['API_UAT_CLIENT_SECRET']  )
@@ -43,7 +44,8 @@ request = ApiBanking::FundsTransferByCustomerService::GetStatus::Request.new()
 request.customerID = '' # your customer id
 request.requestReferenceNo = '' # your reference no
 
-puts ApiBanking::FundsTransferByCustomerService.get_status(request)`
+puts ApiBanking::FundsTransferByCustomerService.get_status(request)
+```
 
 ## Contributing
 
