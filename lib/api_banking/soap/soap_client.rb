@@ -6,16 +6,22 @@ module ApiBanking
       data = construct_envelope(&block)
       options = {}
       options[:method] = :post
+      puts data.to_xml
       options[:body] = data.to_xml
 
       options[:headers] = {'Content-Type' => "application/xml; charset=utf-8"}
+
+      # SOAPAction header is not allowed for Soap12
+      # options[:headers][:SOAPAction] = data.doc.at_xpath('/soapenv12:Envelope/soapenv12:Body/*', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope').name
       
       options[:proxy] = self.configuration.proxy
       options[:timeout] = self.configuration.timeout
       
       set_options_for_environment(options)
-
-      request = Typhoeus::Request.new(self.configuration.environment.url + uri, options)
+      
+      options[:headers]['User-Agent'] = "Quantiguous; API Banking, Ruby Gem #{ApiBanking::VERSION}"
+      
+      request = Typhoeus::Request.new(self.configuration.environment.endpoints[self.name.split('::').last.to_sym], options)
       response = request.run
       
       parse_response(response)
@@ -90,6 +96,7 @@ module ApiBanking
       code   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Code/soapenv12:Subcode/soapenv12:Value', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
       subcode   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Code/soapenv12:Subcode/soapenv12:Subcode/soapenv12:Value', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
       reasonText   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Reason/soapenv12:Text', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
+      puts reply
       return Fault.new(code, subcode, reasonText)
     end
     
