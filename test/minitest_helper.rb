@@ -25,3 +25,7 @@ end
 ApiBanking::SinglePayment.configure do |config|  
   config.environment = rbl_uat
 end
+
+ApiBanking::DomesticRemittanceByPartnerService.configure do |config|  
+  config.environment = ybl_uat
+end
