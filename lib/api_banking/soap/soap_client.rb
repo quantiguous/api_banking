@@ -6,7 +6,6 @@ module ApiBanking
       data = construct_envelope(&block)
       options = {}
       options[:method] = :post
-      puts data.to_xml
       options[:body] = data.to_xml
 
       options[:headers] = {'Content-Type' => "application/xml; charset=utf-8"}
@@ -42,6 +41,8 @@ module ApiBanking
         options[:userpwd] = "#{self.configuration.environment.user}:#{self.configuration.environment.password}"
         options[:headers]["X-IBM-Client-Id"] = self.configuration.environment.client_id
         options[:headers]["X-IBM-Client-Secret"] = self.configuration.environment.client_secret
+      elsif self.configuration.environment.kind_of?ApiBanking::Environment::QG::DEMO
+        options[:userpwd] = "#{self.configuration.environment.user}:#{self.configuration.environment.password}"        
       end
     end
 
@@ -96,8 +97,14 @@ module ApiBanking
       code   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Code/soapenv12:Subcode/soapenv12:Value', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
       subcode   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Code/soapenv12:Subcode/soapenv12:Subcode/soapenv12:Value', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
       reasonText   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Reason/soapenv12:Text', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
-      puts reply
+#      detail = parse_detail(reply.at_xpath('//soapenv12:Fault/soapenv12:Detail', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
+      
+      code ||= 'ns:E500'  # in certain cases, a fault code isn't set by the server
       return Fault.new(code, subcode, reasonText)
+    end
+    
+    def self.parse_detail(node)
+      return content_at(node.at_xpath('Text')) # 
     end
     
     def self.content_at(node)
