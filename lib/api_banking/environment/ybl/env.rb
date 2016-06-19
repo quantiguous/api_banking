@@ -7,8 +7,7 @@ module ApiBanking
           self.endpoints = {
             FundsTransferByCustomerService:  'https://uatsky.yesbank.in/app/uat/fundsTransferByCustomerServiceHttpService',
             FundsTransferByCustomerService2: 'https://uatsky.yesbank.in/app/uat/fundsTransferByCustomerService2',
-            InstantMoneyTransferService:     'https://uatsky.yesbank.in:7081/IMTService',
-            DomesticRemittanceByPartnerService:     'https://api.quantiguous.com/DomesticRemittanceByPartnerService'
+            InstantMoneyTransferService:     'https://uatsky.yesbank.in:7081/IMTService'
           }
         end
       end

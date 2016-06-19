@@ -9,6 +9,7 @@ Typhoeus::Config.verbose = false
 ybl_uat = ApiBanking::Environment::YBL::UAT.new(ENV['API_UAT_USER'], ENV['API_UAT_PASSWORD'], ENV['API_UAT_CLIENT_ID'], ENV['API_UAT_CLIENT_SECRET']  )
 rbl_uat = ApiBanking::Environment::RBL::UAT.new(ENV['API_RBL_UAT_USER'], ENV['API_RBL_UAT_PASSWORD'], ENV['API_RBL_UAT_CLIENT_ID'], ENV['API_RBL_UAT_CLIENT_SECRET'], ENV['API_RBL_UAT_CLIENT_CERT'], ENV['API_RBL_UAT_CLIENT_KEY']  )
 ybl_prd = ApiBanking::Environment::YBL::PRD.new(ENV['API_USER'], ENV['API_PASSWORD'], ENV['API_CLIENT_ID'], ENV['API_CLIENT_SECRET'], ENV['API_CLIENT_CERT'], ENV['API_CLIENT_KEY'])
+qg_aws =  ApiBanking::Environment::QG::DEMO.new(ENV['API_QG_USER'], ENV['API_QG_PASSWORD'])
 
 ApiBanking::FundsTransferByCustomerService2.configure do |config|  
   config.environment = ybl_uat
@@ -27,5 +28,6 @@ ApiBanking::SinglePayment.configure do |config|
 end
 
 ApiBanking::DomesticRemittanceByPartnerService.configure do |config|  
-  config.environment = ybl_uat
+  puts ENV['API_QG_PASSWORD']
+  config.environment = qg_aws
 end
