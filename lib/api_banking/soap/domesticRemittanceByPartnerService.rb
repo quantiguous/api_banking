@@ -104,16 +104,16 @@ module ApiBanking
               xml.address1 request.beneficiaryAddress
             end
           end
-        #   xml['ns'].beneficiaryContact do |xml|
-        #     xml.mobileNo request.beneficiaryContact.mobileNo unless request.beneficiaryContact.mobileNo.nil?
-        #     xml.emailID request.beneficiaryContact.emailID unless request.beneficiaryContact.emailID.nil?
-        #   end
-        #   xml['ns'].beneficiaryAccountNo request.beneficiaryAccountNo
-        #   xml['ns'].beneficiaryIFSC request.beneficiaryIFSC
-        #   xml['ns'].transferType request.transferType
-        #   xml['ns'].transferCurrencyCode 'INR'
-        #   xml['ns'].transferAmount request.transferAmount
-        #   xml['ns'].remitterToBeneficiaryInfo request.remitterToBeneficiaryInfo
+          xml['ns'].beneficiaryContact do |xml|
+            xml.mobileNo request.beneficiaryContact.mobileNo unless request.beneficiaryContact.mobileNo.nil?
+            xml.emailID request.beneficiaryContact.emailID unless request.beneficiaryContact.emailID.nil?
+          end
+          xml['ns'].beneficiaryAccountNo request.beneficiaryAccountNo
+          xml['ns'].beneficiaryIFSC request.beneficiaryIFSC
+          xml['ns'].transferType request.transferType
+          xml['ns'].transferCurrencyCode 'INR'
+          xml['ns'].transferAmount request.transferAmount
+          xml['ns'].remitterToBeneficiaryInfo request.remitterToBeneficiaryInfo
         end
       end  
       parse_reply(:remit, reply)
