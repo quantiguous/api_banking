@@ -12,6 +12,13 @@ module ApiBanking
       Result = Struct.new(:uniqueResponseNo, :initiateTransferResult)
       TransferResult = Struct.new(:bankReferenceNo, :imtReferenceNo)
     end
+
+    module AddBeneficiary
+      Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo, :beneficiaryName, :beneficiaryAddress)
+      Address = Struct.new(:addressLine, :cityName, :postalCode)
+
+      Result = Struct.new(:uniqueResponseNo)
+    end
     
     class << self
       attr_accessor :configuration
@@ -43,6 +50,31 @@ module ApiBanking
       
       parse_reply(:initiateTransfer, reply)
     end
+
+    def self.add_beneficiary(request)
+      reply = do_remote_call do |xml|
+        xml.addBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
+          xml.parent.namespace = xml.parent.namespace_definitions.first
+          xml['ns'].version SERVICE_VERSION
+          xml['ns'].uniqueRequestNo request.uniqueRequestNo
+          xml['ns'].appID request.appID
+          xml['ns'].customerID request.customerID
+          xml['ns'].beneficiaryMobileNo request.beneficiaryMobileNo
+          xml['ns'].beneficiaryName request.beneficiaryName
+          xml['ns'].beneficiaryAddress do  |xml|
+            if request.beneficiaryAddress.kind_of? AddBeneficiary::Address 
+              xml.addressLine request.beneficiaryAddress.addressLine
+              xml.cityName request.beneficiaryAddress.cityName unless request.beneficiaryAddress.cityName.nil?
+              xml.postalCode request.beneficiaryAddress.postalCode unless request.beneficiaryAddress.postalCode.nil?
+            else
+              xml.addressLine request.beneficiaryAddress
+            end
+          end
+        end
+      end
+      
+      parse_reply(:addBeneficiary, reply)
+    end
   
     private
  
@@ -60,6 +92,10 @@ module ApiBanking
           return InitiateTransfer::Result.new(
             content_at(reply.at_xpath('//ns:initiateTransferResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
             transferResult
+            )
+          when :addBeneficiary
+          return AddBeneficiary::Result.new(
+            content_at(reply.at_xpath('//ns:addBeneficiaryResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
             )
         end
       end
