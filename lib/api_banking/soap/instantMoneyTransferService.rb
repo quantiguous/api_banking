@@ -20,6 +20,12 @@ module ApiBanking
       Result = Struct.new(:uniqueResponseNo)
     end
     
+    module DeleteBeneficiary
+      Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo)
+
+      Result = Struct.new(:uniqueResponseNo)
+    end
+    
     class << self
       attr_accessor :configuration
     end
@@ -75,6 +81,21 @@ module ApiBanking
       
       parse_reply(:addBeneficiary, reply)
     end
+
+    def self.delete_beneficiary(request)
+      reply = do_remote_call do |xml|
+        xml.addBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
+          xml.parent.namespace = xml.parent.namespace_definitions.first
+          xml['ns'].version SERVICE_VERSION
+          xml['ns'].uniqueRequestNo request.uniqueRequestNo
+          xml['ns'].appID request.appID
+          xml['ns'].customerID request.customerID
+          xml['ns'].beneficiaryMobileNo request.beneficiaryMobileNo
+        end
+      end
+      
+      parse_reply(:deleteBeneficiary, reply)
+    end
   
     private
  
@@ -96,6 +117,10 @@ module ApiBanking
           when :addBeneficiary
           return AddBeneficiary::Result.new(
             content_at(reply.at_xpath('//ns:addBeneficiaryResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
+            )
+          when :deleteBeneficiary
+          return DeleteBeneficiary::Result.new(
+            content_at(reply.at_xpath('//ns:deleteBeneficiaryResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
             )
         end
       end

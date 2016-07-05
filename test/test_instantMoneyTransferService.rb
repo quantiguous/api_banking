@@ -18,6 +18,20 @@ class InstantMoneyTransferService < Minitest::Test
 
   end
 
+  def test_it_gives_back_a_deleteBeneficiary_result
+
+    request = ApiBanking::InstantMoneyTransferService::DeleteBeneficiary::Request.new()
+        
+    request.uniqueRequestNo = SecureRandom.uuid.gsub!('-','')
+    request.appID = 'app12345'
+    request.customerID = '42989'
+    request.beneficiaryMobileNo = '9538321404'
+        
+    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.delete_beneficiary(request)}"
+    
+    
+  end 
+  
   def test_it_gives_back_a_addBeneficiary_result
 
     beneficiaryAddress = ApiBanking::InstantMoneyTransferService::AddBeneficiary::Address.new()
