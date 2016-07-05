@@ -31,7 +31,7 @@ class InstantMoneyTransferService < Minitest::Test
     
     
   end 
-  
+
   def test_it_gives_back_a_addBeneficiary_result
 
     beneficiaryAddress = ApiBanking::InstantMoneyTransferService::AddBeneficiary::Address.new()
@@ -51,4 +51,19 @@ class InstantMoneyTransferService < Minitest::Test
 
   end
   
+  def test_it_gives_back_a_get_beneficiaries_result
+
+    request = ApiBanking::InstantMoneyTransferService::GetBeneficiaries::Request.new()
+
+    dateRange = ApiBanking::InstantMoneyTransferService::GetBeneficiaries::DateRange.new()
+    dateRange.fromDate = '2015-12-12'
+    dateRange.toDate = '2016-05-12'
+
+    request.appID = 'app12345'
+    request.customerID = '42989'
+    request.dateRange = dateRange
+    request.numBeneficiaries = 1
+
+    puts "#{self.class.name} #{ApiBanking::InstantMoneyTransferService.get_beneficiaries(request)}"
+  end
 end
