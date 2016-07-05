@@ -23,6 +23,12 @@ module ApiBanking
       Result = Struct.new(:version, :transferType, :reqTransferType, :transactionDate, :transferAmount, :transferCurrencyCode, :transactionStatus)
     end
     
+    #getBalance
+    module GetBalance
+      Request = Struct.new(:version, :appID, :customerID, :AccountNumber)
+      Result = Struct.new(:Version, :accountCurrencyCode, :accountBalanceAmount, :lowBalanceAlert)
+    end
+    
     class << self
       attr_accessor :configuration
     end
@@ -93,6 +99,19 @@ module ApiBanking
       end
       parse_reply(:getStatus, reply)
     end
+    
+    def self.get_balance(request)
+      reply = do_remote_call do |xml|
+        xml.getBalance("xmlns:ns" => SERVICE_NAMESPACE ) do
+          xml.parent.namespace = xml.parent.namespace_definitions.first
+          xml['ns'].version SERVICE_VERSION
+          xml['ns'].appID request.appID
+          xml['ns'].customerID request.customerID
+          xml['ns'].AccountNumber request.AccountNumber
+        end
+      end
+      parse_reply(:getBalance, reply)
+    end
 
     private
     
@@ -128,13 +147,20 @@ module ApiBanking
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transactionStatus/ns:beneficiaryReferenceNo', 'ns' => SERVICE_NAMESPACE))
             )
             return GetStatus::Result.new(
-              content_at(reply.at_xpath('//ns:getStatusResponse//ns:version', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:getStatusResponse/ns:version', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferType', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:reqTransferType', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transactionDate', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferAmount', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
               transactionStatus
+            )  
+          when :getBalance
+            return GetBalance::Result.new(
+              content_at(reply.at_xpath('//ns:getBalanceResponse/ns:Version', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountBalanceAmount', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:getBalanceResponse/ns:lowBalanceAlert', 'ns' => SERVICE_NAMESPACE))
             )   
         end         
       end
