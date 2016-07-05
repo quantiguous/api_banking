@@ -25,6 +25,17 @@ module ApiBanking
 
       Result = Struct.new(:uniqueResponseNo)
     end
+
+    module GetBeneficiaries
+      Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :dateRange, :numBeneficiaries)
+    
+      DateRange = Struct.new(:fromDate, :toDate)  
+      BeneficiariesArray = Struct.new(:beneficiary)
+      Beneficiary = Struct.new(:beneficiaryName, :beneficiaryMobileNo, :registrationDate, :addressLine, :postalCode)
+
+      Result = Struct.new(:numBeneficiaries, :beneficiariesArray)
+
+    end
     
     class << self
       attr_accessor :configuration
@@ -84,7 +95,7 @@ module ApiBanking
 
     def self.delete_beneficiary(request)
       reply = do_remote_call do |xml|
-        xml.addBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
+        xml.deleteBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
           xml['ns'].uniqueRequestNo request.uniqueRequestNo
@@ -96,6 +107,25 @@ module ApiBanking
       
       parse_reply(:deleteBeneficiary, reply)
     end
+
+    def self.get_beneficiaries(request)
+      reply = do_remote_call do |xml|
+        xml.getBeneficiaries("xmlns:ns" => SERVICE_NAMESPACE ) do
+          xml.parent.namespace = xml.parent.namespace_definitions.first
+          xml['ns'].version SERVICE_VERSION
+          xml['ns'].uniqueRequestNo request.uniqueRequestNo
+          xml['ns'].appID request.appID
+          xml['ns'].customerID request.customerID
+          xml.dateRange do |xml|
+            xml.fromDate request.dateRange.fromDate unless request.dateRange.fromDate.nil?
+            xml.toDate request.dateRange.toDate unless request.dateRange.toDate.nil?
+          end
+          xml['ns'].numBeneficiaries request.numBeneficiaries
+        end
+      end
+      parse_reply(:getBeneficiaries, reply)
+    end
+
   
     private
  
@@ -121,6 +151,26 @@ module ApiBanking
           when :deleteBeneficiary
           return DeleteBeneficiary::Result.new(
             content_at(reply.at_xpath('//ns:deleteBeneficiaryResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
+            )
+          when :getBeneficiaries
+            beneficiariesArray = Array.new
+            i = 1
+            numBeneficiaries = content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:numBeneficiaries', 'ns' => SERVICE_NAMESPACE)).to_i
+            until i > numBeneficiaries
+              BeneficiariesArray << getBeneficiaries::Beneficiary.new(
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:beneficiaryName", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:beneficiaryMobileNo", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:registrationDate", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:addressLine", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:postalCode", 'ns' => SERVICE_NAMESPACE))
+              )
+              i = i + 1;
+            end;
+            beneArray = getBeneficiaries::BeneficiariesArray.new(beneficiariesArray)
+            return getBeneficiaries::Result.new(
+              content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:version', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:numBeneficiaries', 'ns' => SERVICE_NAMESPACE)),
+              beneArray
             )
         end
       end
