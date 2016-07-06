@@ -18,19 +18,19 @@ class InstantMoneyTransferService < Minitest::Test
 
   end
 
-  def test_it_gives_back_a_deleteBeneficiary_result
+  def test_it_gives_back_a_cancelTransfer_result
 
-    request = ApiBanking::InstantMoneyTransferService::DeleteBeneficiary::Request.new()
-        
+    request = ApiBanking::InstantMoneyTransferService::CancelTransfer::Request.new()
+
     request.uniqueRequestNo = SecureRandom.uuid.gsub!('-','')
     request.appID = 'app12345'
     request.customerID = '42989'
-    request.beneficiaryMobileNo = '9538321404'
-        
-    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.delete_beneficiary(request)}"
-    
-    
-  end 
+    request.initiateTransferRequestNo = '1234'
+    request.reasonToCancel = 'Cancel'
+
+    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.cancel_transfer(request)}"
+
+  end
 
   def test_it_gives_back_a_addBeneficiary_result
 
@@ -50,6 +50,7 @@ class InstantMoneyTransferService < Minitest::Test
     puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.add_beneficiary(request)}"
 
   end
+
   
   def test_it_gives_back_a_get_beneficiaries_result
 
@@ -66,4 +67,16 @@ class InstantMoneyTransferService < Minitest::Test
 
     puts "#{self.class.name} #{ApiBanking::InstantMoneyTransferService.get_beneficiaries(request)}"
   end
+
+  def test_it_gives_back_a_deleteBeneficiary_result
+
+    request = ApiBanking::InstantMoneyTransferService::DeleteBeneficiary::Request.new()
+        
+    request.uniqueRequestNo = SecureRandom.uuid.gsub!('-','')
+    request.appID = 'app12345'
+    request.customerID = '42989'
+    request.beneficiaryMobileNo = '9538321404'
+        
+    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.delete_beneficiary(request)}"   
+  end 
 end
