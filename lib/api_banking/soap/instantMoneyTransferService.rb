@@ -5,21 +5,20 @@ module ApiBanking
     SERVICE_VERSION = 1
     
     attr_accessor :request, :result
-
-    #transfer
-    module InitiateTransfer
-      Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo, :transferAmount, :passCode, :remitterToBeneficiaryInfo)
-      Result = Struct.new(:uniqueResponseNo, :initiateTransferResult)
-      TransferResult = Struct.new(:bankReferenceNo, :imtReferenceNo)
-    end
-
+    
     module AddBeneficiary
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo, :beneficiaryName, :beneficiaryAddress)
       Address = Struct.new(:addressLine, :cityName, :postalCode)
 
       Result = Struct.new(:uniqueResponseNo)
     end
-    
+
+    module CancelTransfer
+      Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :initiateTransferRequestNo, :reasonToCancel)
+      Result = Struct.new(:uniqueResponseNo, :cancelResult)
+      CancelResult = Struct.new(:imtReferenceNo, :bankReferenceNo)
+    end
+
     module DeleteBeneficiary
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo)
 
@@ -34,7 +33,13 @@ module ApiBanking
       Beneficiary = Struct.new(:beneficiaryName, :beneficiaryMobileNo, :registrationDate, :addressLine, :postalCode)
 
       Result = Struct.new(:numBeneficiaries, :beneficiariesArray)
+    end
 
+    #transfer
+    module InitiateTransfer
+      Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo, :transferAmount, :passCode, :remitterToBeneficiaryInfo)
+      Result = Struct.new(:uniqueResponseNo, :initiateTransferResult)
+      TransferResult = Struct.new(:bankReferenceNo, :imtReferenceNo)
     end
     
     class << self
@@ -126,6 +131,21 @@ module ApiBanking
       parse_reply(:getBeneficiaries, reply)
     end
 
+    def self.cancel_transfer(request)
+      reply = do_remote_call do |xml|
+        xml.cancelTransfer("xmlns:ns" => SERVICE_NAMESPACE ) do
+          xml.parent.namespace = xml.parent.namespace_definitions.first
+          xml['ns'].version SERVICE_VERSION
+          xml['ns'].uniqueRequestNo request.uniqueRequestNo
+          xml['ns'].appID request.appID
+          xml['ns'].customerID request.customerID
+          xml['ns'].initiateTransferRequestNo request.initiateTransferRequestNo
+          xml['ns'].reasonToCancel request.reasonToCancel
+        end
+      end
+      
+      parse_reply(:deleteBeneficiary, reply)
+    end
   
     private
  
@@ -172,6 +192,15 @@ module ApiBanking
               content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:numBeneficiaries', 'ns' => SERVICE_NAMESPACE)),
               beneArray
             )
+          when :cancelTransfer
+          cancelResult = CancelTransfer::CancelResult.new(
+            content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:cancelResult/ns:imtReferenceNo', 'ns' => SERVICE_NAMESPACE)),
+            content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:cancelResult/ns:bankReferenceNo', 'ns' => SERVICE_NAMESPACE))
+          )
+          return CancelTransfer::Result.new(
+            content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
+            cancelResult
+          )
         end
       end
     end
