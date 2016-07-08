@@ -28,6 +28,9 @@ ApiBanking::SinglePayment.configure do |config|
 end
 
 ApiBanking::DomesticRemittanceByPartnerService.configure do |config|  
-  puts ENV['API_QG_PASSWORD']
+  config.environment = qg_aws
+end
+
+ApiBanking::NotificationService.configure do |config|
   config.environment = qg_aws
 end
