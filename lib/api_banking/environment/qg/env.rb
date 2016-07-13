@@ -8,7 +8,7 @@ module ApiBanking
             FundsTransferByCustomerService:  'https://api.quantiguous.com/fundsTransferByCustomerServiceHttpService',
             FundsTransferByCustomerService2: 'http://10.211.55.6:7801/fundsTransferByCustomerService2',
             InstantMoneyTransferService:     'https://api.quantiguous.com/IMTService',
-            DomesticRemittanceByPartnerService:    'https://api.quantiguous.com/DomesticRemittanceByPartnerService' 
+            DomesticRemittanceByPartnerService:    'https://api.quantiguous.com/DomesticRemittanceByPartnerService', 
             NotificationService:             'https://api.quantiguous.com/NotificationService'
           }
         end
