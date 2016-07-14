@@ -42,12 +42,16 @@ module ApiBanking
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
           xml['ns'].appID request.appID
-          xml['ns'].criteria do  |xml|
-            xml.topicGroup request.criteria.topicGroup
-            xml.subscriber do |xml|
-              xml.customerID request.criteria.subscriber.customerID
-              xml.subscribed request.criteria.subscriber.subscribed
-              xml.unsubscribed request.criteria.subscriber.unsubscribed
+          unless request.criteria.nil?
+            xml['ns'].criteria do  |xml|
+              xml.topicGroup request.criteria.topicGroup unless request.criteria.topicGroup.nil?
+              unless request.criteria.subscriber.nil?
+                xml.subscriber do |xml|
+                  xml.customerID request.criteria.subscriber.customerID unless request.criteria.subscriber.customerID.nil?
+                  xml.subscribed request.criteria.subscriber.subscribed unless request.criteria.subscriber.subscribed.nil?
+                  xml.unsubscribed request.criteria.subscriber.unsubscribed unless request.criteria.subscriber.unsubscribed.nil?
+                end
+              end
             end
           end
         end  
