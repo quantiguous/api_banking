@@ -13,6 +13,7 @@ require_relative "api_banking/soap/fundsTransferByCustomerService2"
 require_relative "api_banking/soap/instantMoneyTransferService"
 require_relative "api_banking/soap/domesticRemittanceByPartnerService"
 require_relative "api_banking/soap/notificationService"
+require_relative "api_banking/soap/instantCreditService"
 
 require_relative "api_banking/json/json_client"
 require_relative "api_banking/json/singlePayment"
