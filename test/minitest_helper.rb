@@ -32,5 +32,10 @@ ApiBanking::DomesticRemittanceByPartnerService.configure do |config|
 end
 
 ApiBanking::NotificationService.configure do |config|
+  config.proxy = "10.211.55.2:8080"
+  config.environment = qg_aws
+end
+
+ApiBanking::InstantCreditService.configure do |config|
   config.environment = qg_aws
 end
