@@ -9,12 +9,12 @@ class NotificationService < Minitest::Test
     request = ApiBanking::NotificationService::GetTopics::Request.new()
     
     subscriber.customerID = '12345'
-    subscriber.subscribed = 'true'
-    # subscriber.unsubscribed = 'true'
-    criteria.topicGroup = 'txn'
+    # subscriber.subscribed = 'true'
+    subscriber.unsubscribed = 'true'
+    criteria.topicGroup = 'bal'
     criteria.subscriber = subscriber
     
-    request.appID = 'app12'
+    request.appID = 'app1212'
     request.criteria = criteria
 
     puts "#{self.class.name} : #{ApiBanking::NotificationService.getTopics(request)}"
@@ -40,7 +40,7 @@ class NotificationService < Minitest::Test
     subscriber.customerID = '123456'
     subscriber.accountNo = '1234567890'
     subscriber.contact = contact
-    
+
     request.version = '1'
     request.appID = 'app1212'
     request.topicName = 'balabcealert'
@@ -58,7 +58,7 @@ class NotificationService < Minitest::Test
 
     subscriber.customerID = '123456'
     subscriber.accountNo = '1234567890'
-    
+
     request.version = '1'
     request.appID = 'app1212'
     request.topicName = 'balabcealert'
@@ -89,7 +89,7 @@ class NotificationService < Minitest::Test
     subscriber.contact = contact
 
     recipient.subscriber = subscriber
-    
+
     content.dateContent = '2016-07-15'
 
     mergeVar.name = 'Customer1'

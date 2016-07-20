@@ -308,8 +308,9 @@ module ApiBanking
           numTopics = reply.xpath('//ns:getTopicsResponse/ns:topicsArray/ns:topic', 'ns' => SERVICE_NAMESPACE).count
           until i > numTopics
             numCriDef = reply.xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:criteriaDefinitionArray/ns:criteriaDefinition", 'ns' => SERVICE_NAMESPACE).count
-            j = 0
+            j = 1
             until j > numCriDef
+              p j
               criteriaDefArray << GetTopics::CriteriaDefinition.new(
                 content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:criteriaDefinitionArray/ns:criteriaDefinition[#{j}]/ns:name", 'ns' => SERVICE_NAMESPACE)),
                 content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:criteriaDefinitionArray/ns:criteriaDefinition[#{j}]/ns:valueDataType", 'ns' => SERVICE_NAMESPACE)),
@@ -321,7 +322,7 @@ module ApiBanking
             criteriaDefinitionArray = GetTopics::CriteriaDefinitionArray.new(criteriaDefArray)
             
             numCriteria = reply.xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscription/ns:criteriaArray/ns:criteria", 'ns' => SERVICE_NAMESPACE).count
-            j = 0
+            j = 1
             until j > numCriteria
               value = GetTopics::Value.new(
                 content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscription/ns:criteriaArray/ns:criteria[#{j}]/ns:value/ns:decimalValue", 'ns' => SERVICE_NAMESPACE)),
@@ -338,7 +339,7 @@ module ApiBanking
             criteriaArray = GetTopics::CriteriaArray.new(criArray)
             
             subscription = GetTopics::Subscription.new(
-              content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscription/ns:sunscribedAt", 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscription/ns:subscribedAt", 'ns' => SERVICE_NAMESPACE)),
               criteriaArray
             )
             
@@ -351,8 +352,8 @@ module ApiBanking
               content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:notifyBySMS", 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:canBeBatched", 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscriptionProvider", 'ns' => SERVICE_NAMESPACE)),
-              criteriaDefinitionArray,
-              subscription
+              (criteriaDefinitionArray.criteriaDefinition.empty? ? nil : criteriaDefinitionArray),
+              (subscription.subscribedAt.nil? ? nil : subscription)
             )
             i = i + 1;
           end;
@@ -360,7 +361,7 @@ module ApiBanking
           topicsArray = GetTopics::TopicsArray.new(tpcsArray)
           return GetTopics::Result.new(
             content_at(reply.at_xpath('//ns:getTopicsResponse/ns:version', 'ns' => SERVICE_NAMESPACE)),
-            topicsArray
+            (topicsArray.topic.empty? ? nil : topicsArray)
           ) 
         when :setSubscription
           return SetSubscription::Result.new(
