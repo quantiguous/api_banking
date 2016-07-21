@@ -310,7 +310,6 @@ module ApiBanking
             numCriDef = reply.xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:criteriaDefinitionArray/ns:criteriaDefinition", 'ns' => SERVICE_NAMESPACE).count
             j = 1
             until j > numCriDef
-              p j
               criteriaDefArray << GetTopics::CriteriaDefinition.new(
                 content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:criteriaDefinitionArray/ns:criteriaDefinition[#{j}]/ns:name", 'ns' => SERVICE_NAMESPACE)),
                 content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:criteriaDefinitionArray/ns:criteriaDefinition[#{j}]/ns:valueDataType", 'ns' => SERVICE_NAMESPACE)),
@@ -320,6 +319,7 @@ module ApiBanking
             end
             
             criteriaDefinitionArray = GetTopics::CriteriaDefinitionArray.new(criteriaDefArray)
+            criteriaDefArray = []
             
             numCriteria = reply.xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscription/ns:criteriaArray/ns:criteria", 'ns' => SERVICE_NAMESPACE).count
             j = 1
@@ -337,6 +337,7 @@ module ApiBanking
             end
             
             criteriaArray = GetTopics::CriteriaArray.new(criArray)
+            criArray = []
             
             subscription = GetTopics::Subscription.new(
               content_at(reply.at_xpath("//ns:getTopicsResponse/ns:topicsArray/ns:topic[#{i}]/ns:subscription/ns:subscribedAt", 'ns' => SERVICE_NAMESPACE)),
