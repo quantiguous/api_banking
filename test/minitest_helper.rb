@@ -3,6 +3,15 @@ require 'api_banking'
 
 require 'minitest/autorun'
 require 'securerandom'
+require 'webmock/minitest'
+require 'vcr'
+
+VCR.configure do |c|
+  c.allow_http_connections_when_no_cassette = true
+  c.cassette_library_dir = "test/fixtures"
+  c.hook_into :webmock
+  c.default_cassette_options = {:record => :new_episodes}
+end
 
 Typhoeus::Config.verbose = false
 
