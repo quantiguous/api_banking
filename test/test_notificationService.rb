@@ -2,22 +2,146 @@ require 'minitest_helper'
 
 class NotificationService < Minitest::Test
 
-  def test_it_gives_back_a_getTopics_result
-    
-    criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
-    subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
-    request = ApiBanking::NotificationService::GetTopics::Request.new()
-    
-    subscriber.customerID = '12345'
-    # subscriber.subscribed = 'true'
-    subscriber.unsubscribed = 'true'
-    criteria.topicGroup = 'bal'
-    criteria.subscriber = subscriber
-    
-    request.appID = 'app1212'
-    request.criteria = criteria
+  def test_it_gives_back_zero_topics
+    VCR.use_cassette('NotificationService_getTopics_returns_zero_topics') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
 
-    puts "#{self.class.name} : #{ApiBanking::NotificationService.getTopics(request)}"
+      subscriber.customerID = '1234'
+      subscriber.subscribed = 'true'
+      criteria.topicGroup = 'abc'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      assert_equal topicsResult[:topicsArray], nil
+    end
+  end
+    
+  def test_it_gives_back_one_topic
+    VCR.use_cassette('NotificationService_getTopics_returns_one_topic') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
+
+      subscriber.customerID = '12345'
+      subscriber.subscribed = 'true'
+      criteria.topicGroup = 'bal'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      refute_equal topicsResult[:topicsArray][:topic][0], nil
+    end
+  end
+  
+  def test_it_gives_back_multiple_topics
+    VCR.use_cassette('NotificationService_getTopics_returns_multiple_topics') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
+
+      subscriber.customerID = '12345'
+      subscriber.unsubscribed = 'true'
+      criteria.topicGroup = 'bal'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      refute_equal topicsResult[:topicsArray][:topic].count, 1
+    end
+  end
+  
+  def test_it_gives_back_topic_with_criteriaDefinitionArray
+    VCR.use_cassette('NotificationService_getTopics_topic_with_criteriaDefinitionArray') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
+
+      subscriber.customerID = '12345'
+      subscriber.unsubscribed = 'true'
+      criteria.topicGroup = 'bal'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      assert_equal topicsResult[:topicsArray][:topic][1][:criteriaDefinitionArray][:criteriaDefinition].count, 1
+    end
+  end
+  
+  def test_it_gives_back_topic_without_criteriaDefinitionArray_and_subscription
+    VCR.use_cassette('NotificationService_getTopics_topic_without_criteriaDefinitionArray_and_subscription') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
+
+      subscriber.customerID = '12345'
+      subscriber.unsubscribed = 'true'
+      criteria.topicGroup = 'bal'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      assert_equal topicsResult[:topicsArray][:topic][0][:criteriaDefinitionArray], nil
+      assert_equal topicsResult[:topicsArray][:topic][0][:subscription], nil
+    end
+  end
+  
+  def test_it_gives_back_topic_with_subscription_without_criteria
+    VCR.use_cassette('NotificationService_getTopics_returns_topic_with_subscription_without_criteria') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
+
+      subscriber.customerID = '12345'
+      # subscriber.unsubscribed = 'true'
+      subscriber.subscribed = 'true'
+      criteria.topicGroup = 'bal'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      assert_equal topicsResult[:topicsArray][:topic][0][:subscription][:criteriaArray][:criteria], []
+    end
+  end
+  
+  def test_it_gives_back_topic_with_subscription_with_criteria
+    VCR.use_cassette('NotificationService_getTopics_returns_topic_with_subscription_with_criteria') do
+      criteria = ApiBanking::NotificationService::GetTopics::ReqCriteria.new()
+      subscriber = ApiBanking::NotificationService::GetTopics::Subscriber.new()
+      request = ApiBanking::NotificationService::GetTopics::Request.new()
+
+      subscriber.customerID = '2727'
+      subscriber.subscribed = 'true'
+      criteria.topicGroup = 'fd'
+      criteria.subscriber = subscriber
+
+      request.appID = 'app1212'
+      request.criteria = criteria
+
+      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      puts "#{self.class.name} : #{topicsResult}"
+      refute_equal topicsResult[:topicsArray][:topic][0][:subscription][:criteriaArray][:criteria].count, 0
+    end
   end
 
   def test_it_gives_back_a_setSubscription_result
