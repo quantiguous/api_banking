@@ -6,7 +6,7 @@ module ApiBanking
           super
           self.endpoints = {
             FundsTransferByCustomerService:  'https://api.quantiguous.com/fundsTransferByCustomerServiceHttpService',
-            FundsTransferByCustomerService2: 'http://api.quantiguous.com/fundsTransferByCustomerService2',
+            FundsTransferByCustomerService2: 'https://api.quantiguous.com/fundsTransferByCustomerService2',
             InstantMoneyTransferService:     'https://api.quantiguous.com/IMTService',
             DomesticRemittanceByPartnerService:    'https://api.quantiguous.com/DomesticRemittanceByPartnerService', 
             NotificationService:             'https://api.quantiguous.com/NotificationService',
