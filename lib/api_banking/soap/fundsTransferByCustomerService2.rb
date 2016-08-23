@@ -9,7 +9,7 @@ module ApiBanking
     #transfer
     module Transfer
       Address = Struct.new(:address1, :address2, :address3, :postalCode, :city, :stateOrProvince, :country)
-      Beneficiary = Struct.new(:fullName, :address, :accountNo, :accountIFSC, :mobileNo, :mmid)
+      Beneficiary = Struct.new(:fullName, :address, :accountNo, :accountIFSC, :mobileNo, :mmid, :beneCode)
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :debitAccountNo, :beneficiary, :transferAmount, :transferType, :purposeCode, :remitterToBeneficiaryInfo)
     
       TransactionStatus = Struct.new(:statusCode, :subStatusCode, :bankReferenceNo, :beneficiaryReferenceNo)
@@ -49,31 +49,34 @@ module ApiBanking
           xml['ns'].version SERVICE_VERSION
           xml['ns'].uniqueRequestNo request.uniqueRequestNo
           xml['ns'].appID request.appID
-          xml['ns'].purposeCode request.purposeCode
+          xml['ns'].purposeCode request.purposeCode unless request.purposeCode.nil?
           xml['ns'].customerID request.customerID
           xml['ns'].debitAccountNo request.debitAccountNo
           xml['ns'].beneficiary do  |xml|
-            xml.beneficiaryDetail do |xml|
-              xml.beneficiaryName do |xml|
-                xml.fullName request.beneficiary.fullName
-              end
-              xml.beneficiaryAddress do |xml|
-                if request.beneficiary.address.kind_of? Transfer::Address 
-                  xml.address1 request.beneficiary.address.address1
-                  xml.address2 request.beneficiary.address.address2 unless request.beneficiary.address.address2.nil?
-                  xml.address3 request.beneficiary.address.address3 unless request.beneficiary.address.address3.nil?
-                  xml.postalCode request.beneficiary.address.postalCode unless request.beneficiary.address.postalCode.nil?
-                  xml.city request.beneficiary.address.city unless request.beneficiary.address.city.nil?
-                  xml.stateOrProvince request.beneficiary.address.stateOrProvince unless request.beneficiary.address.stateOrProvince.nil?
-                  xml.country request.beneficiary.address.country unless request.beneficiary.address.country.nil?
-                else
-                  xml.address1 request.beneficiary.address
+            xml.beneficiaryCode request.beneficiary.beneCode unless request.beneficiary.beneCode.nil?
+            unless request.beneficiary.fullName.nil?
+              xml.beneficiaryDetail do |xml|
+                xml.beneficiaryName do |xml|
+                  xml.fullName request.beneficiary.fullName
                 end
+                xml.beneficiaryAddress do |xml|
+                  if request.beneficiary.address.kind_of? Transfer::Address 
+                    xml.address1 request.beneficiary.address.address1
+                    xml.address2 request.beneficiary.address.address2 unless request.beneficiary.address.address2.nil?
+                    xml.address3 request.beneficiary.address.address3 unless request.beneficiary.address.address3.nil?
+                    xml.postalCode request.beneficiary.address.postalCode unless request.beneficiary.address.postalCode.nil?
+                    xml.city request.beneficiary.address.city unless request.beneficiary.address.city.nil?
+                    xml.stateOrProvince request.beneficiary.address.stateOrProvince unless request.beneficiary.address.stateOrProvince.nil?
+                    xml.country request.beneficiary.address.country unless request.beneficiary.address.country.nil?
+                  else
+                    xml.address1 request.beneficiary.address
+                  end
+                end
+                xml.beneficiaryContact do |xml|
+                end
+                xml.beneficiaryAccountNo request.beneficiary.accountNo
+                xml.beneficiaryIFSC request.beneficiary.accountIFSC
               end
-              xml.beneficiaryContact do |xml|
-              end
-              xml.beneficiaryAccountNo request.beneficiary.accountNo
-              xml.beneficiaryIFSC request.beneficiary.accountIFSC
             end
           end
           xml.transferType request.transferType
