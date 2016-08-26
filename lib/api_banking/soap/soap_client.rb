@@ -1,6 +1,11 @@
 module ApiBanking
   
   class SoapClient    
+    @@last_response = nil
+
+    def self.last_response
+      @@last_response
+    end
          
     def self.do_remote_call(&block)
       data = construct_envelope(&block)
@@ -23,6 +28,8 @@ module ApiBanking
       request = Typhoeus::Request.new(self.configuration.environment.endpoints[self.name.split('::').last.to_sym], options)
       response = request.run
       
+      @@last_response = response 
+
       parse_response(response)
     end
     
