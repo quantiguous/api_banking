@@ -18,6 +18,7 @@ module ApiBanking
           self.ssl_ca_file ||= File.expand_path('./prd.pem', File.dirname(__FILE__))
           self.endpoints = {
             FundsTransferByCustomerService:  'https://sky.yesbank.in:444/app/live/ssl/fundsTransferByCustomerService'
+            FundsTransferByCustomerService2:  'https://sky.yesbank.in:444/app/live/fundsTransferByCustomerService2'
           }          
         end
       end
