@@ -12,7 +12,7 @@ module ApiBanking
         end
       end
       
-      PRD = Struct.new(:user, :password, :client_id, :client_secret, :ssl_client_cert, :ssl_client_key, :ssl_ca_file, :endpoints) do
+      PRD = Struct.new(:user, :password, :client_id, :client_secret, :ssl_client_cert, :ssl_client_key, :ssl_client_key_pass, :ssl_ca_file, :endpoints) do
         def initialize(*)
           super
           self.ssl_ca_file ||= File.expand_path('./prd.pem', File.dirname(__FILE__))

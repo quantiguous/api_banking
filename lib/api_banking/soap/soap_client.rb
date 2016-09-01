@@ -42,6 +42,7 @@ module ApiBanking
         options[:headers]["X-IBM-Client-Secret"] = self.configuration.environment.client_secret
         options[:cainfo] = self.configuration.environment.ssl_ca_file
         options[:sslkey] = self.configuration.environment.ssl_client_key
+        options[:keypasswd] = self.configuration.environment.ssl_client_key_pass
         options[:sslcert] = self.configuration.environment.ssl_client_cert
         options[:ssl_verifypeer] = true
       elsif self.configuration.environment.kind_of?ApiBanking::Environment::YBL::UAT
