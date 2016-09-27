@@ -11,7 +11,8 @@ module ApiBanking
             DomesticRemittanceByPartnerService:    'https://api.quantiguous.com/DomesticRemittanceByPartnerService', 
             NotificationService:             'https://api.quantiguous.com/NotificationService',
             InstantCreditService:            'https://api.quantiguous.com/InstantCreditService',
-            PrepaidCardManagementService:    'http://api.quantiguous.com/PrepaidCardManagementService'
+            PrepaidCardManagementService:    'https://api.quantiguous.com/PrepaidCardManagementService',
+            PrepaidCardService:              'https://api.quantiguous.com/PrepaidCardService'
           }
         end
       end

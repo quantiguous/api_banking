@@ -54,3 +54,8 @@ ApiBanking::PrepaidCardManagementService.configure do |config|
   config.proxy = "10.211.55.2:8080"
   config.environment = qg_aws
 end
+
+ApiBanking::PrepaidCardService.configure do |config|
+  config.proxy = "10.211.55.2:8080"
+  config.environment = qg_aws
+end
