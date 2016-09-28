@@ -20,8 +20,9 @@ rbl_uat = ApiBanking::Environment::RBL::UAT.new(ENV['API_RBL_UAT_USER'], ENV['AP
 ybl_prd = ApiBanking::Environment::YBL::PRD.new(ENV['API_USER'], ENV['API_PASSWORD'], ENV['API_CLIENT_ID'], ENV['API_CLIENT_SECRET'], ENV['API_CLIENT_CERT'], ENV['API_CLIENT_KEY'])
 qg_aws =  ApiBanking::Environment::QG::DEMO.new(ENV['API_QG_USER'], ENV['API_QG_PASSWORD'])
 
-ApiBanking::FundsTransferByCustomerService2.configure do |config|  
-  config.environment = ybl_uat
+ApiBanking::FundsTransferByCustomerService2.configure do |config|
+  config.proxy = "10.211.55.2:8080"
+  config.environment = qg_aws
 end
 
 ApiBanking::FundsTransferByCustomerService.configure do |config|
@@ -29,7 +30,7 @@ ApiBanking::FundsTransferByCustomerService.configure do |config|
 end
 
 ApiBanking::InstantMoneyTransferService.configure do |config|  
-  config.environment = ybl_uat
+  config.environment = qg_aws
 end
 
 ApiBanking::SinglePayment.configure do |config|  
@@ -46,5 +47,15 @@ ApiBanking::NotificationService.configure do |config|
 end
 
 ApiBanking::InstantCreditService.configure do |config|
+  config.environment = qg_aws
+end
+
+ApiBanking::PrepaidCardManagementService.configure do |config|
+  config.proxy = "10.211.55.2:8080"
+  config.environment = qg_aws
+end
+
+ApiBanking::PrepaidCardService.configure do |config|
+  config.proxy = "10.211.55.2:8080"
   config.environment = qg_aws
 end
