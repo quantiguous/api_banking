@@ -7,7 +7,9 @@ module ApiBanking
           self.endpoints = {
             FundsTransferByCustomerService:  'https://uatsky.yesbank.in/app/uat/fundsTransferByCustomerServiceHttpService',
             FundsTransferByCustomerService2: 'https://uatsky.yesbank.in/app/uat/ssl/fundsTransferByCustomerSevice2',
-            InstantMoneyTransferService:     'https://uatsky.yesbank.in:7081/IMTService'
+            InstantMoneyTransferService:     'https://uatsky.yesbank.in:7081/IMTService',
+            PrepaidCardManagementService:    'https://uatsky.yesbank.in/app/uat/PrepaidCardManagementService',
+            PrepaidCardService:              'https://uatsky.yesbank.in/app/uat/PrepaidCardService'
           }
         end
       end
