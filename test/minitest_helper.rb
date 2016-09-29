@@ -52,10 +52,15 @@ end
 
 ApiBanking::PrepaidCardManagementService.configure do |config|
   config.proxy = "10.211.55.2:8080"
-  config.environment = qg_aws
+  config.environment = ybl_uat
 end
 
 ApiBanking::PrepaidCardService.configure do |config|
   config.proxy = "10.211.55.2:8080"
-  config.environment = qg_aws
+  config.environment = ybl_uat
+end
+
+ApiBanking::SocialBankingService.configure do |config|
+  config.proxy = "10.211.55.2:8080"
+  config.environment = ybl_uat
 end
