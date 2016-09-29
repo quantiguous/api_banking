@@ -12,7 +12,9 @@ module ApiBanking
             NotificationService:             'https://api.quantiguous.com/NotificationService',
             InstantCreditService:            'https://api.quantiguous.com/InstantCreditService',
             PrepaidCardManagementService:    'https://api.quantiguous.com/PrepaidCardManagementService',
-            PrepaidCardService:              'https://api.quantiguous.com/PrepaidCardService'
+            PrepaidCardService:              'https://api.quantiguous.com/PrepaidCardService',
+            SocialBankingService:            'https://api.quantiguous.com/SocialBankingService',
+            VirtualCardManagementService:    'https://api.quantiguous.com/VirtualCardManagementService'
           }
         end
       end
