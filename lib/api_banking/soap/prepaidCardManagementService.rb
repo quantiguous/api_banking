@@ -59,7 +59,7 @@ module ApiBanking
           xml['ns'].birthDate request.birthDate if Date.parse(request.birthDate).is_a?(Date)
           xml['ns'].idDocument do  |xml|
             xml.documentType request.idDocument.documentType
-            xml.documentNo request.idDocument.countryOfIssue
+            xml.documentNo request.idDocument.documentNo
             xml.countryOfIssue request.idDocument.countryOfIssue
           end
           xml['ns'].address do  |xml|

@@ -13,7 +13,8 @@ module ApiBanking
             InstantCreditService:            'https://api.quantiguous.com/InstantCreditService',
             PrepaidCardManagementService:    'http://10.211.55.6:7800/PrepaidCardManagementService',
             PrepaidCardService:              'http://10.211.55.6:7800/PrepaidCardService',
-            SocialBankingService:            'https://api.quantiguous.com/SocialBankingService'
+            SocialBankingService:            'https://api.quantiguous.com/SocialBankingService',
+            VirtualCardManagementService:    'http://10.211.55.6:7800/VirtualCardManagementService'
           }
         end
       end
