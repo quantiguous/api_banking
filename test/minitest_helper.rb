@@ -21,7 +21,6 @@ ybl_prd = ApiBanking::Environment::YBL::PRD.new(ENV['API_USER'], ENV['API_PASSWO
 qg_aws =  ApiBanking::Environment::QG::DEMO.new(ENV['API_QG_USER'], ENV['API_QG_PASSWORD'])
 
 ApiBanking::FundsTransferByCustomerService2.configure do |config|
-  config.proxy = "10.211.55.2:8080"
   config.environment = qg_aws
 end
 
@@ -42,7 +41,6 @@ ApiBanking::DomesticRemittanceByPartnerService.configure do |config|
 end
 
 ApiBanking::NotificationService.configure do |config|
-  config.proxy = "10.211.55.2:8080"
   config.environment = qg_aws
 end
 
@@ -51,11 +49,13 @@ ApiBanking::InstantCreditService.configure do |config|
 end
 
 ApiBanking::PrepaidCardManagementService.configure do |config|
-  config.proxy = "10.211.55.2:8080"
   config.environment = qg_aws
 end
 
 ApiBanking::PrepaidCardService.configure do |config|
-  config.proxy = "10.211.55.2:8080"
   config.environment = qg_aws
+end
+
+ApiBanking::InwardRemittanceByPartnerService.configure do |config|
+  config.environment = ybl_uat
 end
