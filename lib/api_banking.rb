@@ -18,6 +18,7 @@ require_relative "api_banking/soap/prepaidCardManagementService"
 require_relative "api_banking/soap/prepaidCardService"
 require_relative "api_banking/soap/socialBankingService"
 require_relative "api_banking/soap/virtualCardManagementService"
+require_relative "api_banking/soap/inwardRemittanceByPartnerService"
 
 require_relative "api_banking/json/json_client"
 require_relative "api_banking/json/singlePayment"
