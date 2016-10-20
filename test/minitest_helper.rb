@@ -29,7 +29,7 @@ ApiBanking::FundsTransferByCustomerService.configure do |config|
 end
 
 ApiBanking::InstantMoneyTransferService.configure do |config|  
-  config.environment = qg_aws
+  config.environment = ybl_uat
 end
 
 ApiBanking::SinglePayment.configure do |config|  
