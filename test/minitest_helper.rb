@@ -53,7 +53,11 @@ ApiBanking::PrepaidCardManagementService.configure do |config|
 end
 
 ApiBanking::PrepaidCardService.configure do |config|
-  config.environment = qg_aws
+  config.environment = ybl_uat
+end
+
+ApiBanking::SocialBankingService.configure do |config|
+  config.environment = ybl_uat
 end
 
 ApiBanking::InwardRemittanceByPartnerService.configure do |config|
