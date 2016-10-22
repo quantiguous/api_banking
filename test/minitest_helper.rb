@@ -32,11 +32,11 @@ ApiBanking::InstantMoneyTransferService.configure do |config|
   config.environment = ybl_uat
 end
 
-ApiBanking::SinglePayment.configure do |config|  
+ApiBanking::SinglePayment.configure do |config|
   config.environment = rbl_uat
 end
 
-ApiBanking::DomesticRemittanceByPartnerService.configure do |config|  
+ApiBanking::DomesticRemittanceByPartnerService.configure do |config|
   config.environment = qg_aws
 end
 
@@ -61,5 +61,9 @@ ApiBanking::SocialBankingService.configure do |config|
 end
 
 ApiBanking::InwardRemittanceByPartnerService.configure do |config|
+  config.environment = ybl_uat
+end
+
+ApiBanking::AadhaarVerificationService.configure do |config|
   config.environment = ybl_uat
 end
