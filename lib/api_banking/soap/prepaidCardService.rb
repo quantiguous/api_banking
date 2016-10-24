@@ -1,5 +1,5 @@
 module ApiBanking
-  class PrepaidCardService < SoapClient
+  class PrepaidCardService < Soap12Client
     
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1

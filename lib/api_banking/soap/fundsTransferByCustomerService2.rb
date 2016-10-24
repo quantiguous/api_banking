@@ -1,5 +1,5 @@
 module ApiBanking
-  class FundsTransferByCustomerService2 < SoapClient
+  class FundsTransferByCustomerService2 < Soap12Client
     
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1
