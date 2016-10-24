@@ -1,5 +1,5 @@
 module ApiBanking
-  class InstantMoneyTransferService < SoapClient
+  class InstantMoneyTransferService < Soap12Client
     
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1
@@ -144,7 +144,7 @@ module ApiBanking
         end
       end
       
-      parse_reply(:deleteBeneficiary, reply)
+      parse_reply(:cancelTransfer, reply)
     end
   
     private
@@ -193,14 +193,14 @@ module ApiBanking
               beneArray
             )
           when :cancelTransfer
-          cancelResult = CancelTransfer::CancelResult.new(
-            content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:cancelResult/ns:imtReferenceNo', 'ns' => SERVICE_NAMESPACE)),
-            content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:cancelResult/ns:bankReferenceNo', 'ns' => SERVICE_NAMESPACE))
-          )
-          return CancelTransfer::Result.new(
-            content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
-            cancelResult
-          )
+            cancelResult = CancelTransfer::CancelResult.new(
+              content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:cancelResult/ns:imtReferenceNo', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:cancelResult/ns:bankReferenceNo', 'ns' => SERVICE_NAMESPACE))
+            )
+            return CancelTransfer::Result.new(
+              content_at(reply.at_xpath('//ns:cancelTransferResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
+              cancelResult
+            )
         end
       end
     end

@@ -1,5 +1,5 @@
 module ApiBanking
-  class SocialBankingService < SoapClient
+  class SocialBankingService < Soap12Client
     
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1

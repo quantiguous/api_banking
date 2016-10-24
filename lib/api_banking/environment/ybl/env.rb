@@ -13,7 +13,8 @@ module ApiBanking
             PrepaidCardService:              'https://uatsky.yesbank.in:7081/PrepaidCardService',
             SocialBankingService:            'https://uatsky.yesbank.in/app/uat/SocialBankingServiceHttpService',
             VirtualCardManagementService:    'https://uatsky.yesbank.in/app/uat/VirtualCardManagementService',
-            InwardRemittanceByPartnerService: 'https://uatsky.yesbank.in:7081/InwardRemittanceByPartnerService'
+            InwardRemittanceByPartnerService: 'https://uatsky.yesbank.in:7081/InwardRemittanceByPartnerService',
+            AadhaarVerificationService:      'https://uatsky.yesbank.in/app/uat/ssl/eKYC'
           }
         end
       end
