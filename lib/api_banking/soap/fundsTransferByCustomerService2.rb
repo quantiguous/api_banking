@@ -28,22 +28,9 @@ module ApiBanking
       Request = Struct.new(:version, :appID, :customerID, :AccountNumber)
       Result = Struct.new(:Version, :accountCurrencyCode, :accountBalanceAmount, :lowBalanceAlert)
     end
-    
-    class << self
-      attr_accessor :configuration
-    end
         
-    def self.configure
-      self.configuration ||= Configuration.new
-      yield(configuration)
-    end
-    
-    class Configuration
-      attr_accessor :environment, :proxy, :timeout
-    end
-        
-    def self.transfer(request)
-      reply = do_remote_call do |xml|
+    def self.transfer(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.transfer("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -90,8 +77,8 @@ module ApiBanking
     end
 
     
-    def self.get_status(request)
-      reply = do_remote_call do |xml|
+    def self.get_status(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getStatus("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -103,8 +90,8 @@ module ApiBanking
       parse_reply(:getStatus, reply)
     end
     
-    def self.get_balance(request)
-      reply = do_remote_call do |xml|
+    def self.get_balance(env, request)
+      reply = do_remote_call(envs) do |xml|
         xml.getBalance("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION

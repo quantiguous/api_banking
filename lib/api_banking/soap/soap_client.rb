@@ -1,13 +1,12 @@
 module ApiBanking
   
   class SoapClient    
-    @@last_response = nil
-
+    
     def self.last_response
-      @@last_response
+      Thread.current[:last_response]
     end
          
-    def self.do_remote_call(soapAction = nil, &block)
+    def self.do_remote_call(env, soapAction = nil, &block)
       data = construct_envelope(&block)
       options = {}
       options[:method] = :post
@@ -16,17 +15,20 @@ module ApiBanking
       # add soap11/12 specific headers
       add_soap_headers(options, soapAction)
       
-      options[:proxy] = self.configuration.proxy
-      options[:timeout] = self.configuration.timeout
+      # TODO: configuration removed for thread-safety, the assumption that one app at one time will connect to one environment
+      # isn't valid anymore (starkit)
+      # options[:proxy] = self.configuration.proxy
+      # options[:timeout] = self.configuration.timeout
       
-      set_options_for_environment(options)
+      set_options_for_environment(env, options)
       
       options[:headers]['User-Agent'] = "Quantiguous; API Banking, Ruby Gem #{ApiBanking::VERSION}"
       
-      request = Typhoeus::Request.new(self.configuration.environment.endpoints[self.name.split('::').last.to_sym], options)
+      p options
+      request = Typhoeus::Request.new(env.endpoints[self.name.split('::').last.to_sym], options)
       response = request.run
       
-      @@last_response = response 
+      Thread.current[:last_response] = response 
 
       parse_response(response)
     end
@@ -34,22 +36,25 @@ module ApiBanking
 
     private 
 
-    def self.set_options_for_environment(options)
-      if self.configuration.environment.kind_of?ApiBanking::Environment::YBL::PRD
-        options[:userpwd] = "#{self.configuration.environment.user}:#{self.configuration.environment.password}"
-        options[:headers]["X-IBM-Client-Id"] = self.configuration.environment.client_id
-        options[:headers]["X-IBM-Client-Secret"] = self.configuration.environment.client_secret
-        options[:cainfo] = self.configuration.environment.ssl_ca_file
-        options[:sslkey] = self.configuration.environment.ssl_client_key
-        options[:keypasswd] = self.configuration.environment.ssl_client_key_pass
-        options[:sslcert] = self.configuration.environment.ssl_client_cert
+    def self.set_options_for_environment(env, options)
+      if env.kind_of?ApiBanking::Environment::YBL::PRD
+        options[:username] = env.user
+        options[:password] = env.password
+        options[:headers]["X-IBM-Client-Id"] = env.client_id
+        options[:headers]["X-IBM-Client-Secret"] = env.client_secret
+        options[:cainfo] = env.ssl_ca_file
+        options[:sslkey] = env.ssl_client_key
+        options[:keypasswd] = env.ssl_client_key_pass
+        options[:sslcert] = env.ssl_client_cert
         options[:ssl_verifypeer] = true
-      elsif self.configuration.environment.kind_of?ApiBanking::Environment::YBL::UAT
-        options[:userpwd] = "#{self.configuration.environment.user}:#{self.configuration.environment.password}"
-        options[:headers]["X-IBM-Client-Id"] = self.configuration.environment.client_id
-        options[:headers]["X-IBM-Client-Secret"] = self.configuration.environment.client_secret
-      elsif self.configuration.environment.kind_of?ApiBanking::Environment::QG::DEMO
-        options[:userpwd] = "#{self.configuration.environment.user}:#{self.configuration.environment.password}"        
+      elsif env.kind_of?ApiBanking::Environment::YBL::UAT
+        options[:username] = env.user
+        options[:password] = env.password
+        options[:headers]["X-IBM-Client-Id"] = env.client_id
+        options[:headers]["X-IBM-Client-Secret"] = env.client_secret
+      elsif env.kind_of?ApiBanking::Environment::QG::DEMO
+        options[:username] = env.user
+        options[:password] = env.password
       end
     end
 

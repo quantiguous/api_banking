@@ -29,7 +29,7 @@ class TestFundsTransferByCustomerService2 < Minitest::Test
     
     request.beneficiary = beneficiary
     
-    puts "#{self.class.name} #{ApiBanking::FundsTransferByCustomerService2.transfer(request)}"
+    puts "#{self.class.name} #{ApiBanking::FundsTransferByCustomerService2.transfer(FundsTransferByCustomerService2Environment, request)}"
     
   end  
   
@@ -41,6 +41,6 @@ class TestFundsTransferByCustomerService2 < Minitest::Test
     request.customerID = '000000'
     request.requestReferenceNo = 'SOMEREFERENCENO'
 
-    puts "#{self.class.name} : #{ApiBanking::FundsTransferByCustomerService2.get_status(request)}"
+    puts "#{self.class.name} : #{ApiBanking::FundsTransferByCustomerService2.get_status(FundsTransferByCustomerService2Environment, request)}"
   end
 end
