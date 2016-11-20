@@ -20,9 +20,8 @@ rbl_uat = ApiBanking::Environment::RBL::UAT.new(ENV['API_RBL_UAT_USER'], ENV['AP
 ybl_prd = ApiBanking::Environment::YBL::PRD.new(ENV['API_USER'], ENV['API_PASSWORD'], ENV['API_CLIENT_ID'], ENV['API_CLIENT_SECRET'], ENV['API_CLIENT_CERT'], ENV['API_CLIENT_KEY'])
 qg_aws =  ApiBanking::Environment::QG::DEMO.new(ENV['API_QG_USER'], ENV['API_QG_PASSWORD'])
 
-ApiBanking::FundsTransferByCustomerService2.configure do |config|
-  config.environment = qg_aws
-end
+FundsTransferByCustomerService2Environment = qg_aws
+InstantMoneyTransferServiceEnvironment = ybl_uat
 
 ApiBanking::FundsTransferByCustomerService.configure do |config|
   config.environment = ybl_uat

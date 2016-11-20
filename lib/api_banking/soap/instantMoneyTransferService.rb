@@ -29,8 +29,8 @@ module ApiBanking
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :dateRange, :numBeneficiaries)
     
       DateRange = Struct.new(:fromDate, :toDate)  
-      BeneficiariesArray = Struct.new(:beneficiary)
       Beneficiary = Struct.new(:beneficiaryName, :beneficiaryMobileNo, :registrationDate, :addressLine, :postalCode)
+      BeneficiariesArray = Struct.new(:beneficiary)
 
       Result = Struct.new(:numBeneficiaries, :beneficiariesArray)
     end
@@ -55,8 +55,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
         
-    def self.transfer(request)
-      reply = do_remote_call do |xml|
+    def self.transfer(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.initiateTransfer("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -73,8 +73,8 @@ module ApiBanking
       parse_reply(:initiateTransfer, reply)
     end
 
-    def self.add_beneficiary(request)
-      reply = do_remote_call do |xml|
+    def self.add_beneficiary(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.addBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -98,8 +98,8 @@ module ApiBanking
       parse_reply(:addBeneficiary, reply)
     end
 
-    def self.delete_beneficiary(request)
-      reply = do_remote_call do |xml|
+    def self.delete_beneficiary(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.deleteBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -113,12 +113,11 @@ module ApiBanking
       parse_reply(:deleteBeneficiary, reply)
     end
 
-    def self.get_beneficiaries(request)
-      reply = do_remote_call do |xml|
+    def self.get_beneficiaries(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getBeneficiaries("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
-          xml['ns'].uniqueRequestNo request.uniqueRequestNo
           xml['ns'].appID request.appID
           xml['ns'].customerID request.customerID
           xml.dateRange do |xml|
@@ -131,8 +130,8 @@ module ApiBanking
       parse_reply(:getBeneficiaries, reply)
     end
 
-    def self.cancel_transfer(request)
-      reply = do_remote_call do |xml|
+    def self.cancel_transfer(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.cancelTransfer("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -153,7 +152,6 @@ module ApiBanking
       if reply.kind_of?Fault
         return reply
       else
-        puts reply
         case operationName
           when :initiateTransfer
           transferResult = InitiateTransfer::TransferResult.new(
@@ -177,18 +175,17 @@ module ApiBanking
             i = 1
             numBeneficiaries = content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:numBeneficiaries', 'ns' => SERVICE_NAMESPACE)).to_i
             until i > numBeneficiaries
-              BeneficiariesArray << getBeneficiaries::Beneficiary.new(
-                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:beneficiaryName", 'ns' => SERVICE_NAMESPACE)),
-                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:beneficiaryMobileNo", 'ns' => SERVICE_NAMESPACE)),
-                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:registrationDate", 'ns' => SERVICE_NAMESPACE)),
-                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:addressLine", 'ns' => SERVICE_NAMESPACE)),
-                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:BeneficiariesArray/ns:beneficiary[#{i}]/ns:postalCode", 'ns' => SERVICE_NAMESPACE))
+              beneficiariesArray << GetBeneficiaries::Beneficiary.new(
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:beneficiariesArray/ns:beneficiary[#{i}]/ns:beneficiaryName", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:beneficiariesArray/ns:beneficiary[#{i}]/ns:beneficiaryMobileNo", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:beneficiariesArray/ns:beneficiary[#{i}]/ns:registrationDate", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:beneficiariesArray/ns:beneficiary[#{i}]/ns:addressLine", 'ns' => SERVICE_NAMESPACE)),
+                content_at(reply.at_xpath("//ns:getBeneficiariesResponse/ns:beneficiariesArray/ns:beneficiary[#{i}]/ns:postalCode", 'ns' => SERVICE_NAMESPACE))
               )
               i = i + 1;
             end;
-            beneArray = getBeneficiaries::BeneficiariesArray.new(beneficiariesArray)
-            return getBeneficiaries::Result.new(
-              content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:version', 'ns' => SERVICE_NAMESPACE)),
+            beneArray = GetBeneficiaries::BeneficiariesArray.new(beneficiariesArray)
+            return GetBeneficiaries::Result.new(
               content_at(reply.at_xpath('//ns:getBeneficiariesResponse/ns:numBeneficiaries', 'ns' => SERVICE_NAMESPACE)),
               beneArray
             )
