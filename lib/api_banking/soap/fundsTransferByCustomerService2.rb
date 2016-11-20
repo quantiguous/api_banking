@@ -91,7 +91,7 @@ module ApiBanking
     end
     
     def self.get_balance(env, request)
-      reply = do_remote_call(envs) do |xml|
+      reply = do_remote_call(env) do |xml|
         xml.getBalance("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION

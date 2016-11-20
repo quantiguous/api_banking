@@ -24,7 +24,6 @@ module ApiBanking
       
       options[:headers]['User-Agent'] = "Quantiguous; API Banking, Ruby Gem #{ApiBanking::VERSION}"
       
-      p options
       request = Typhoeus::Request.new(env.endpoints[self.name.split('::').last.to_sym], options)
       response = request.run
       
