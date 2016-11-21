@@ -16,7 +16,7 @@ class TestPrepaidCardService < Minitest::Test
     request.beneficiaryAccountNo = '001790700000088'
     request.beneficiaryIFSC = 'HDFC0000260'
 
-    addBeneficiaryResult = ApiBanking::PrepaidCardService.addBeneficiary(request)
+    addBeneficiaryResult = ApiBanking::PrepaidCardService.addBeneficiary(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{addBeneficiaryResult}"
     refute_equal addBeneficiaryResult[:uniqueResponseNo], nil
   end
@@ -28,7 +28,7 @@ class TestPrepaidCardService < Minitest::Test
     request.appID = 'APP13'
     request.mobileNo = '9009999999'
 
-    getBalanceResult = ApiBanking::PrepaidCardService.getBalance(request)
+    getBalanceResult = ApiBanking::PrepaidCardService.getBalance(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{getBalanceResult}"
     refute_equal getBalanceResult[:cardBalance], nil
   end
@@ -40,7 +40,7 @@ class TestPrepaidCardService < Minitest::Test
     request.appID = 'APP13'
     request.mobileNo = '9009999999'
 
-    getCustomerDetailResult = ApiBanking::PrepaidCardService.getCustomerDetail(request)
+    getCustomerDetailResult = ApiBanking::PrepaidCardService.getCustomerDetail(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{getCustomerDetailResult}"
     refute_equal getCustomerDetailResult[:customerEmail], nil
   end
@@ -53,7 +53,7 @@ class TestPrepaidCardService < Minitest::Test
     request.mobileNo = '9009999999'
     request.numBeneficiaries = 1
 
-    getBeneficiariesResult = ApiBanking::PrepaidCardService.getBeneficiaries(request)
+    getBeneficiariesResult = ApiBanking::PrepaidCardService.getBeneficiaries(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{getBeneficiariesResult}"
     refute_equal getBeneficiariesResult[:numBeneficiaries], 1
   end
@@ -67,7 +67,7 @@ class TestPrepaidCardService < Minitest::Test
     request.mobileNo = '1474520669'
     request.numTransactions = 1
 
-    getTransactionsResult = ApiBanking::PrepaidCardService.getTransactions(request)
+    getTransactionsResult = ApiBanking::PrepaidCardService.getTransactions(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{getTransactionsResult}"
     assert_equal getTransactionsResult[:transactionsArray][:transaction].count, 1
   end
@@ -80,7 +80,7 @@ class TestPrepaidCardService < Minitest::Test
     request.mobileNo = '9008888888'
     request.numTransactions = 1
 
-    getTransactionsResult = ApiBanking::PrepaidCardService.getTransactions(request)
+    getTransactionsResult = ApiBanking::PrepaidCardService.getTransactions(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{getTransactionsResult}"
     assert_equal getTransactionsResult[:transactionsArray][:transaction].count, 1
   end
@@ -100,7 +100,7 @@ class TestPrepaidCardService < Minitest::Test
     request.transferAmount = '1000'
     request.remitterToBeneficiaryInfo = 'FUNDS TRANSFER'
 
-    payToAccountResult = ApiBanking::PrepaidCardService.payToAccount(request)
+    payToAccountResult = ApiBanking::PrepaidCardService.payToAccount(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{payToAccountResult}"
     refute_equal payToAccountResult[:transferType], nil
   end
@@ -117,7 +117,7 @@ class TestPrepaidCardService < Minitest::Test
     request.contactMobileNo = '9009999999'
     request.transferAmount = '1000'
 
-    payToContactResult = ApiBanking::PrepaidCardService.payToContact(request)
+    payToContactResult = ApiBanking::PrepaidCardService.payToContact(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{payToContactResult}"
     refute_equal payToContactResult[:transferType], nil
   end
@@ -134,7 +134,7 @@ class TestPrepaidCardService < Minitest::Test
     request.subscriberID = '987878787876'
     request.topupAmount = '100'
 
-    topUpResult = ApiBanking::PrepaidCardService.topUp(request)
+    topUpResult = ApiBanking::PrepaidCardService.topUp(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{topUpResult}"
     refute_equal topUpResult[:uniqueResponseNo], nil
   end
@@ -147,7 +147,7 @@ class TestPrepaidCardService < Minitest::Test
     request.mobileNo = '9008888888'
     request.pinBlock = '338BE5673C6B86CF'
 
-    verifyPINResult = ApiBanking::PrepaidCardService.verifyPIN(request)
+    verifyPINResult = ApiBanking::PrepaidCardService.verifyPIN(PrepaidCardServiceEnvironment, request)
     puts "#{self.class.name} : #{verifyPINResult}"
     refute_equal verifyPINResult[:version], nil
   end
