@@ -14,7 +14,6 @@ module ApiBanking
       GenericID = Struct.new(:idType, :idValue)
       AccountIdentity = Struct.new(:accountNo, :registeredAccount)
       
-      TransactionsArray = Struct.new(:transaction)
       Transaction = Struct.new(:transactionID, :recordDate, :transactionType, :currencyCode, :amount, :narrative)
       Result = Struct.new(:version, :customerID, :accountNo, :numTransactions, :transactionsArray)
     end
@@ -83,21 +82,21 @@ module ApiBanking
             until i > numTxns
               txnArray << GetTransactions::Transaction.new(
                 content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:transactionID", 'ns' => SERVICE_NAMESPACE)),
-                content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:recordDate", 'ns' => SERVICE_NAMESPACE)),
+                Date.strptime(content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:recordDate", 'ns' => SERVICE_NAMESPACE)),"%Y-%m-%d"),
                 content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:transactionType", 'ns' => SERVICE_NAMESPACE)),
                 content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:currencyCode", 'ns' => SERVICE_NAMESPACE)),
-                content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:amount", 'ns' => SERVICE_NAMESPACE)),
+                BigDecimal.new(content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:amount", 'ns' => SERVICE_NAMESPACE))),
                 content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:transactionsArray/ns:transaction[#{i}]/ns:narrative", 'ns' => SERVICE_NAMESPACE))
               )
               i = i + 1;
             end
-            transactionsArray = GetTransactions::TransactionsArray.new(txnArray)
+
             return GetTransactions::Result.new(
               content_at(reply.at_xpath('//ns:getTransactionsResponse/ns:version', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getTransactionsResponse/ns:customerID', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getTransactionsResponse/ns:accountNo', 'ns' => SERVICE_NAMESPACE)),
-              content_at(reply.at_xpath('//ns:getTransactionsResponse/ns:numTransactions', 'ns' => SERVICE_NAMESPACE)),
-              transactionsArray
+              txnArray.size,
+              txnArray
             )
         end         
       end
