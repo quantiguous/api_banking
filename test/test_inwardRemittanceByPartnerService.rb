@@ -62,8 +62,7 @@ class TestInwardRemittanceByPartnerService < Minitest::Test
     request.remitterToBeneficiaryInfo = 'Remitter Hit Provides ID'
     request.purposeCode = 'PC01'
 
-    remitResult = ApiBanking::InwardRemittanceByPartnerService.remit(request)
-    p remitResult
+    remitResult = ApiBanking::InwardRemittanceByPartnerService.remit(InwardRemittanceByPartnerServiceEnvironment, request)
     refute_equal remitResult.uniqueResponseNo, nil
   end
 

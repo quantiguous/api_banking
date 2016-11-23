@@ -22,47 +22,14 @@ qg_aws =  ApiBanking::Environment::QG::DEMO.new(ENV['API_QG_USER'], ENV['API_QG_
 
 FundsTransferByCustomerService2Environment = qg_aws
 InstantMoneyTransferServiceEnvironment = ybl_uat
-
-ApiBanking::FundsTransferByCustomerService.configure do |config|
-  config.environment = ybl_uat
-end
-
-ApiBanking::InstantMoneyTransferService.configure do |config|  
-  config.environment = ybl_uat
-end
-
-ApiBanking::SinglePayment.configure do |config|
-  config.environment = rbl_uat
-end
-
-ApiBanking::DomesticRemittanceByPartnerService.configure do |config|
-  config.environment = qg_aws
-end
-
-ApiBanking::NotificationService.configure do |config|
-  config.environment = qg_aws
-end
-
-ApiBanking::InstantCreditService.configure do |config|
-  config.environment = qg_aws
-end
-
-ApiBanking::PrepaidCardManagementService.configure do |config|
-  config.environment = qg_aws
-end
-
-ApiBanking::PrepaidCardService.configure do |config|
-  config.environment = ybl_uat
-end
-
-ApiBanking::SocialBankingService.configure do |config|
-  config.environment = ybl_uat
-end
-
-ApiBanking::InwardRemittanceByPartnerService.configure do |config|
-  config.environment = ybl_uat
-end
-
-ApiBanking::AadhaarVerificationService.configure do |config|
-  config.environment = ybl_uat
-end
+FundsTransferByCustomerServiceEnvironment = ybl_uat
+SinglePaymentEnvironment = rbl_uat
+DomesticRemittanceByPartnerServiceEnvironment = qg_aws
+NotificationServiceEnvironment = qg_aws
+InstantCreditServiceEnvironment = qg_aws
+PrepaidCardManagementServiceEnvironment = qg_aws
+PrepaidCardServiceEnvironment = ybl_uat
+SocialBankingServiceEnvironment = ybl_uat
+InwardRemittanceByPartnerServiceEnvironment = ybl_uat
+AadhaarVerificationServiceEnvironment = ybl_uat
+VirtualCardManagementServiceEnvironment = ybl_uat
