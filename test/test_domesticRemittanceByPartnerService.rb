@@ -37,7 +37,7 @@ class TestDomesticRemittanceByPartnerService < Minitest::Test
     request.transferAmount = 20
     request.remitterToBeneficiaryInfo = 'FUND TRANSFER'
 
-    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.remit(request)}"
+    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.remit(DomesticRemittanceByPartnerServiceEnvironment, request)}"
     
   end  
   
@@ -48,7 +48,7 @@ class TestDomesticRemittanceByPartnerService < Minitest::Test
     request.partnerCode = 'APP12'
     request.requestReferenceNo = 'A0EE09FE6E98410C84774CC486657AF1'
 
-    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.get_status(request)}"
+    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.get_status(DomesticRemittanceByPartnerServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_get_balance_result
@@ -59,7 +59,7 @@ class TestDomesticRemittanceByPartnerService < Minitest::Test
     request.customerID = '2424'
     request.accountNo = '1234567890'
 
-    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.get_balance(request)}"
+    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.get_balance(DomesticRemittanceByPartnerServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_get_transactions_result
@@ -75,6 +75,6 @@ class TestDomesticRemittanceByPartnerService < Minitest::Test
     request.accountNo = '1234567890'
     request.dateRange = dateRange
 
-    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.get_transactions(request)}"
+    puts "#{self.class.name} #{ApiBanking::DomesticRemittanceByPartnerService.get_transactions(DomesticRemittanceByPartnerServiceEnvironment, request)}"
   end
 end

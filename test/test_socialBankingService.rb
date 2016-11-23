@@ -22,7 +22,7 @@ class TestSocialBankingService < Minitest::Test
     request.accountIdentity = accountIdentity
     request.numTransactions = 3
 
-    getTransactionsResult =ApiBanking::SocialBankingService.getTransactions(request)
+    getTransactionsResult =ApiBanking::SocialBankingService.getTransactions(SocialBankingServiceEnvironment, request)
     puts "#{self.class.name} #{getTransactionsResult}"
     assert_equal getTransactionsResult[:numTransactions], "3"
   end
@@ -44,7 +44,7 @@ class TestSocialBankingService < Minitest::Test
     request.accountIdentity = accountIdentity
     request.numTransactions = 1
 
-    getTransactionsResult =ApiBanking::SocialBankingService.getTransactions(request)
+    getTransactionsResult =ApiBanking::SocialBankingService.getTransactions(SocialBankingServiceEnvironment, request)
     puts "#{self.class.name} #{getTransactionsResult}"
     assert_equal getTransactionsResult[:numTransactions], "1"
   end
@@ -72,7 +72,7 @@ class TestSocialBankingService < Minitest::Test
     request.accountIdentity = accountIdentity
     request.numTransactions = 3
 
-    getTransactionsResult =  ApiBanking::SocialBankingService.getTransactions(request)
+    getTransactionsResult =  ApiBanking::SocialBankingService.getTransactions(SocialBankingServiceEnvironment, request)
     puts "#{self.class.name} #{getTransactionsResult}"
     assert_equal getTransactionsResult[:code], 'ns:E1006'
   end

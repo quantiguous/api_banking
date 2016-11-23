@@ -16,7 +16,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       assert_equal topicsResult[:topicsArray], nil
     end
@@ -36,7 +36,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       refute_equal topicsResult[:topicsArray][:topic][0], nil
     end
@@ -56,7 +56,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       refute_equal topicsResult[:topicsArray][:topic].count, 1
     end
@@ -76,7 +76,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       assert_equal topicsResult[:topicsArray][:topic][1][:criteriaDefinitionArray][:criteriaDefinition].count, 1
     end
@@ -96,7 +96,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       assert_equal topicsResult[:topicsArray][:topic][0][:criteriaDefinitionArray], nil
       assert_equal topicsResult[:topicsArray][:topic][0][:subscription], nil
@@ -118,7 +118,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       assert_equal topicsResult[:topicsArray][:topic][0][:subscription][:criteriaArray][:criteria], []
     end
@@ -138,7 +138,7 @@ class NotificationService < Minitest::Test
       request.appID = 'app1212'
       request.criteria = criteria
 
-      topicsResult = ApiBanking::NotificationService.getTopics(request)
+      topicsResult = ApiBanking::NotificationService.getTopics(NotificationServiceEnvironment, request)
       puts "#{self.class.name} : #{topicsResult}"
       refute_equal topicsResult[:topicsArray][:topic][0][:subscription][:criteriaArray][:criteria].count, 0
     end
@@ -173,7 +173,7 @@ class NotificationService < Minitest::Test
     request.subscriber = subscriber
     request.criteriaArray = criteriaArray
 
-    puts "#{self.class.name} : #{ApiBanking::NotificationService.setSubscription(request)}"
+    puts "#{self.class.name} : #{ApiBanking::NotificationService.setSubscription(NotificationServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_deleteSubscription_result
@@ -188,7 +188,7 @@ class NotificationService < Minitest::Test
     request.topicName = 'balabcealert'
     request.subscriber = subscriber
 
-    puts "#{self.class.name} : #{ApiBanking::NotificationService.deleteSubscription(request)}"
+    puts "#{self.class.name} : #{ApiBanking::NotificationService.deleteSubscription(NotificationServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_sendMessage_result
@@ -235,7 +235,7 @@ class NotificationService < Minitest::Test
     request.referenceNo = SecureRandom.uuid.gsub!('-','')
     request.sendAt = '2016-07-17T09:00:00'
 
-    puts "#{self.class.name} : #{ApiBanking::NotificationService.sendMessage(request)}"
+    puts "#{self.class.name} : #{ApiBanking::NotificationService.sendMessage(NotificationServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_dispatchMessage_result
@@ -280,7 +280,7 @@ class NotificationService < Minitest::Test
     request.referenceNo = SecureRandom.uuid.gsub!('-','')
     request.sendAt = '2016-07-17T09:00:00'
 
-    puts "#{self.class.name} : #{ApiBanking::NotificationService.dispatchMessage(request)}"
+    puts "#{self.class.name} : #{ApiBanking::NotificationService.dispatchMessage(NotificationServiceEnvironment, request)}"
   end
   
 end

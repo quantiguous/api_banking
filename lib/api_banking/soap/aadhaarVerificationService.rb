@@ -37,8 +37,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
     
-    def self.getDemoAuthData(request)
-      reply = do_remote_call("http://xmlns.yesbank.com/WS/EKYCService/GetDemoAuthData") do |xml|
+    def self.getDemoAuthData(env, request)
+      reply = do_remote_call(env, "http://xmlns.yesbank.com/WS/EKYCService/GetDemoAuthData") do |xml|
         xml.GetDemoAuthDataReq("xmlns:eky" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['eky'].ReqHdr do |header|

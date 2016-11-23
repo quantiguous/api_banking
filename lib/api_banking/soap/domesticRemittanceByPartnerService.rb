@@ -61,8 +61,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
         
-    def self.remit(request)
-      reply = do_remote_call do |xml|
+    def self.remit(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.remit("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -119,8 +119,8 @@ module ApiBanking
       parse_reply(:remit, reply)
     end
     
-    def self.get_status(request)
-      reply = do_remote_call do |xml|
+    def self.get_status(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getRemittanceStatus("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -131,8 +131,8 @@ module ApiBanking
       parse_reply(:getRemittanceStatus, reply)
     end
     
-    def self.get_balance(request)
-      reply = do_remote_call do |xml|
+    def self.get_balance(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getBalance("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -144,8 +144,8 @@ module ApiBanking
       parse_reply(:getBalance, reply)
     end
     
-    def self.get_transactions(request)
-      reply = do_remote_call do |xml|
+    def self.get_transactions(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getTransactions("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION

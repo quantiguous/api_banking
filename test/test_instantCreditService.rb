@@ -22,7 +22,7 @@ class InstantCreditService < Minitest::Test
     request.discountedAmount = 80
     request.feeAmount = 20
     
-    puts "#{self.class.name} #{ApiBanking::InstantCreditService.pay_now(request)}"
+    puts "#{self.class.name} #{ApiBanking::InstantCreditService.pay_now(InstantCreditServiceEnvironment, request)}"
 
   end
 
@@ -34,7 +34,7 @@ class InstantCreditService < Minitest::Test
     request.customerID = '2424'
     request.requestReferenceNo = 'QG00000001003'
 
-    puts "#{self.class.name} : #{ApiBanking::InstantCreditService.get_status(request)}"
+    puts "#{self.class.name} : #{ApiBanking::InstantCreditService.get_status(InstantCreditServiceEnvironment, request)}"
   end
   
 end
