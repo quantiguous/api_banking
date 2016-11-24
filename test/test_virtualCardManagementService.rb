@@ -31,7 +31,7 @@ class TestVirtualCardManagementService < Minitest::Test
     request.emailID = Time.now.to_i.to_s + '@gmail.com'
     request.password = 'iFQqK3Sw4UfPsmmYzSMJxQ==--9Ljp00QD4vzGU6gPdvg5Qg=='
 
-    registerCardResult = ApiBanking::VirtualCardManagementService.registerCard(request)
+    registerCardResult = ApiBanking::VirtualCardManagementService.registerCard(VirtualCardManagementServiceEnvironment, request)
     puts "#{self.class.name} #{registerCardResult}"
     refute_equal registerCardResult[:uniqueResponseNo], nil
   end
@@ -46,7 +46,7 @@ class TestVirtualCardManagementService < Minitest::Test
     request.emailID = '1474448773@gmail.com'
     request.password = 'bnmkj123'
 
-    blockCardResult = ApiBanking::VirtualCardManagementService.blockCard(request)
+    blockCardResult = ApiBanking::VirtualCardManagementService.blockCard(VirtualCardManagementServiceEnvironment, request)
     puts "#{self.class.name} #{blockCardResult}"
     refute_equal blockCardResult[:uniqueResponseNo], nil
   end
@@ -60,7 +60,7 @@ class TestVirtualCardManagementService < Minitest::Test
     request.emailID = '1474448773@gmail.com'
     request.password = 'DE+piR2rKfYOfVya0TNBQcSVdBurWfqMNkEcI+pU0A6ptXz4jwojGpbHMH4eLTcJ--XZbd6Dw0i4mExnpbYselwQ=='
 
-    getCardDetailResult = ApiBanking::VirtualCardManagementService.getCardDetail(request)
+    getCardDetailResult = ApiBanking::VirtualCardManagementService.getCardDetail(VirtualCardManagementServiceEnvironment, request)
     puts "#{self.class.name} #{getCardDetailResult}"
     refute_equal getCardDetailResult[:cardUID], nil
   end

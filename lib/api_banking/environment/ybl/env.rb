@@ -7,13 +7,13 @@ module ApiBanking
           self.endpoints = {
             FundsTransferByCustomerService:  'https://uatsky.yesbank.in/app/uat/fundsTransferByCustomerServiceHttpService',
             FundsTransferByCustomerService2: 'https://uatsky.yesbank.in/app/uat/ssl/fundsTransferByCustomerSevice2',
-            InstantMoneyTransferService:     'https://uatsky.yesbank.in:7081/IMTService',
+            InstantMoneyTransferService:     'https://uatsky.yesbank.in/app/uat/IMTService',
             InstantCreditService:            'https://uatsky.yesbank.in/app/uat/ssl/InstantCreditService',
-            PrepaidCardManagementService:    'https://uatsky.yesbank.in:7081/PrepaidCardManagementService',
-            PrepaidCardService:              'https://uatsky.yesbank.in:7081/PrepaidCardService',
+            PrepaidCardManagementService:    'https://uatsky.yesbank.in/app/uat/PrepaidCardManagementService',
+            PrepaidCardService:              'https://uatsky.yesbank.in/app/uat/PrepaidCardService',
             SocialBankingService:            'https://uatsky.yesbank.in/app/uat/SocialBankingServiceHttpService',
             VirtualCardManagementService:    'https://uatsky.yesbank.in/app/uat/VirtualCardManagementService',
-            InwardRemittanceByPartnerService: 'https://uatsky.yesbank.in:7081/InwardRemittanceByPartnerService',
+            InwardRemittanceByPartnerService: 'https://uatsky.yesbank.in/app/uat/InwardRemittanceByPartnerService',
             AadhaarVerificationService:      'https://uatsky.yesbank.in/app/uat/ssl/eKYC'
           }
         end

@@ -14,7 +14,7 @@ class InstantMoneyTransferService < Minitest::Test
     request.passCode = 1734
     request.remitterToBeneficiaryInfo = 'FUND TRANSFER'
 
-    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.transfer(request)}"
+    puts "#{self.class.name} initiateTransfer: #{ApiBanking::InstantMoneyTransferService.transfer(InstantMoneyTransferServiceEnvironment, request)}"
 
   end
 
@@ -28,7 +28,7 @@ class InstantMoneyTransferService < Minitest::Test
     request.initiateTransferRequestNo = '1234'
     request.reasonToCancel = 'Cancel'
 
-    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.cancel_transfer(request)}"
+    puts "#{self.class.name} cancelTransfer: #{ApiBanking::InstantMoneyTransferService.cancel_transfer(InstantMoneyTransferServiceEnvironment, request)}"
 
   end
 
@@ -47,7 +47,7 @@ class InstantMoneyTransferService < Minitest::Test
     beneficiaryAddress.postalCode = '670307'
     request.beneficiaryAddress = beneficiaryAddress
 
-    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.add_beneficiary(request)}"
+    puts "#{self.class.name} addBeneficiary: #{ApiBanking::InstantMoneyTransferService.add_beneficiary(InstantMoneyTransferServiceEnvironment, request)}"
 
   end
 
@@ -65,7 +65,7 @@ class InstantMoneyTransferService < Minitest::Test
     request.dateRange = dateRange
     request.numBeneficiaries = 1
 
-    puts "#{self.class.name} #{ApiBanking::InstantMoneyTransferService.get_beneficiaries(request)}"
+    puts "#{self.class.name} getBeneficiaries: #{ApiBanking::InstantMoneyTransferService.get_beneficiaries(InstantMoneyTransferServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_deleteBeneficiary_result
@@ -77,6 +77,6 @@ class InstantMoneyTransferService < Minitest::Test
     request.customerID = '42989'
     request.beneficiaryMobileNo = '9538321404'
         
-    puts "#{self.class.name} : #{ApiBanking::InstantMoneyTransferService.delete_beneficiary(request)}"   
+    puts "#{self.class.name} deleteBeneficiary: #{ApiBanking::InstantMoneyTransferService.delete_beneficiary(InstantMoneyTransferServiceEnvironment, request)}"   
   end 
 end
