@@ -37,7 +37,7 @@ class TestAadhaarVerificationService < Minitest::Test
     getDemoAuthDataReq.reqBody = reqBody
     request.getDemoAuthDataReq = getDemoAuthDataReq
 
-    result = ApiBanking::AadhaarVerificationService.getDemoAuthData(request)
+    result = ApiBanking::AadhaarVerificationService.getDemoAuthData(AadhaarVerificationServiceEnvironment, request)
     puts "#{self.class.name} #{result}"
   end
 end

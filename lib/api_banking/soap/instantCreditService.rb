@@ -33,8 +33,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
         
-    def self.pay_now(request)
-      reply = do_remote_call do |xml|
+    def self.pay_now(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.payNow("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -56,8 +56,8 @@ module ApiBanking
     end
 
     
-    def self.get_status(request)
-      reply = do_remote_call do |xml|
+    def self.get_status(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getStatus("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION

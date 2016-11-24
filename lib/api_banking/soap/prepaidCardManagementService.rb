@@ -42,8 +42,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
         
-    def self.registerCard(request)
-      reply = do_remote_call do |xml|
+    def self.registerCard(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.registerCard("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -83,8 +83,8 @@ module ApiBanking
     end
 
     
-    def self.loadCard(request)
-      reply = do_remote_call do |xml|
+    def self.loadCard(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.loadCard("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -99,8 +99,8 @@ module ApiBanking
       parse_reply(:loadCard, reply)
     end
     
-    def self.blockCard(request)
-      reply = do_remote_call do |xml|
+    def self.blockCard(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.blockCard("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
