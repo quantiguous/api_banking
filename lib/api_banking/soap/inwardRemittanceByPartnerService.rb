@@ -36,8 +36,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
         
-    def self.remit(request)
-      reply = do_remote_call do |xml|
+    def self.remit(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.remit("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION

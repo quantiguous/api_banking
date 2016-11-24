@@ -87,8 +87,8 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
         
-    def self.getTopics(request)
-      reply = do_remote_call do |xml|
+    def self.getTopics(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.getTopics("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -110,8 +110,8 @@ module ApiBanking
       parse_reply(:getTopics, reply)
     end
 
-    def self.setSubscription(request)
-      reply = do_remote_call do |xml|
+    def self.setSubscription(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.setSubscription("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -148,8 +148,8 @@ module ApiBanking
       parse_reply(:setSubscription, reply)
     end
 
-    def self.deleteSubscription(request)
-      reply = do_remote_call do |xml|
+    def self.deleteSubscription(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.deleteSubscription("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -166,8 +166,8 @@ module ApiBanking
       parse_reply(:deleteSubscription, reply)
     end
 
-    def self.sendMessage(request)
-      reply = do_remote_call do |xml|
+    def self.sendMessage(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.sendMessage("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -229,8 +229,8 @@ module ApiBanking
       parse_reply(:sendMessage, reply)
     end
 
-    def self.dispatchMessage(request)
-      reply = do_remote_call do |xml|
+    def self.dispatchMessage(env, request)
+      reply = do_remote_call(env) do |xml|
         xml.dispatchMessage("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION

@@ -37,7 +37,7 @@ class TestPrepaidCardManagementService < Minitest::Test
     request.proxyCardNumber = '000000418970'
     # request.productCode = 'papp99'
 
-    puts "#{self.class.name} #{ApiBanking::PrepaidCardManagementService.registerCard(request)}"
+    puts "#{self.class.name} #{ApiBanking::PrepaidCardManagementService.registerCard(PrepaidCardManagementServiceEnvironment, request)}"
 
   end
 
@@ -52,7 +52,7 @@ class TestPrepaidCardManagementService < Minitest::Test
     request.mobileNo = '9008888888'
     request.loadAmount = '1000'
 
-    puts "#{self.class.name} #{ApiBanking::PrepaidCardManagementService.loadCard(request)}"
+    puts "#{self.class.name} #{ApiBanking::PrepaidCardManagementService.loadCard(PrepaidCardManagementServiceEnvironment, request)}"
   end
 
   def test_it_gives_back_a_block_card_result
@@ -63,7 +63,7 @@ class TestPrepaidCardManagementService < Minitest::Test
     request.appID = 'APP13'
     request.mobileNo = '9008888881'
 
-    puts "#{self.class.name} #{ApiBanking::PrepaidCardManagementService.blockCard(request)}"
+    puts "#{self.class.name} #{ApiBanking::PrepaidCardManagementService.blockCard(PrepaidCardManagementServiceEnvironment, request)}"
   end
 
 end

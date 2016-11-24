@@ -43,7 +43,7 @@ class TestSinglePayment < Minitest::Test
     request.remitter = remitter
     request.beneficiary = beneficiary
     
-    puts "#{self.class.name} #{ApiBanking::SinglePayment.transfer(request)}"
+    puts "#{self.class.name} #{ApiBanking::SinglePayment.transfer(SinglePaymentEnvironment, request)}"
     
   end  
   
