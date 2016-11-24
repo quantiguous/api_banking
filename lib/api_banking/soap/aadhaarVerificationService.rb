@@ -1,11 +1,11 @@
 module ApiBanking
   class AadhaarVerificationService < Soap11Client
-    
+
     SERVICE_NAMESPACE = 'http://xmlns.yesbank.com/WS/EKYCDataElement'
     SERVICE_VERSION = "1.0"
-    
+
     attr_accessor :request, :result
-    
+
     #verification
     module Verification
       Request = Struct.new(:getDemoAuthDataReq)
@@ -15,10 +15,10 @@ module ApiBanking
       ServiceContext = Struct.new(:serviceName, :reqRefNum, :reqRefTimeStamp, :serviceVersionNo)
       ReqBody = Struct.new(:demographicDataModel)
       DemographicDataModel = Struct.new(:aadhaarName, :aadhaarNo, :agentID, :dob, :gender, :loginKey, :merchantId, :merchantTransactionId, :pincode, :terminalID)
-      
+
       Result = Struct.new(:getDemoAuthDataRes)
       GetDemoAuthDataRes = Struct.new(:resHdr)
-      ResHdr = Struct.new(:consumerContext, :serviceContext, :serviceResponse, :errorDetails) 
+      ResHdr = Struct.new(:consumerContext, :serviceContext, :serviceResponse, :errorDetails)
       ServiceResponse = Struct.new(:esbResTimeStamp, :esbResStatus)
       ErrorDetails = Struct.new(:errorInfo)
       ErrorInfo = Struct.new(:errSrc, :hostErrCode, :hostErrDesc)
@@ -27,18 +27,18 @@ module ApiBanking
     class << self
       attr_accessor :configuration
     end
-        
+
     def self.configure
       self.configuration ||= Configuration.new
       yield(configuration)
     end
-    
+
     class Configuration
       attr_accessor :environment, :proxy, :timeout
     end
-    
-    def self.getDemoAuthData(env, request)
-      reply = do_remote_call(env, "http://xmlns.yesbank.com/WS/EKYCService/GetDemoAuthData") do |xml|
+
+    def self.getDemoAuthData(env, request, callbacks)
+      reply = do_remote_call(env, callbacks, "http://xmlns.yesbank.com/WS/EKYCService/GetDemoAuthData") do |xml|
         xml.GetDemoAuthDataReq("xmlns:eky" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['eky'].ReqHdr do |header|
@@ -74,7 +74,7 @@ module ApiBanking
       end
       parse_reply(:getDemoAuthData, reply)
     end
-    
+
     private
 
     def self.uri()
@@ -83,7 +83,7 @@ module ApiBanking
 
     Result = Struct.new(:getDemoAuthDataRes)
       getDemoAuthDataRes = Struct.new(:resHdr)
-      ResHdr = Struct.new(:consumerContext, :serviceContext, :serviceResponse, :errorDetails) 
+      ResHdr = Struct.new(:consumerContext, :serviceContext, :serviceResponse, :errorDetails)
       ServiceResponse = Struct.new(:esbResTimeStamp, :esbResStatus)
       ConsumerContext = Struct.new(:requesterID)
       ServiceContext = Struct.new(:serviceName, :reqRefNum, :reqRefTimeStamp, :serviceVersionNo)
@@ -121,15 +121,15 @@ module ApiBanking
               consumer_context,
               service_context,
               service_response,
-              error_details                                
+              error_details
               )
             res = Verification::GetDemoAuthDataRes.new(
-              header                              
+              header
               )
             return Verification::Result.new(
               res
-            ) 
-        end         
+            )
+        end
       end
     end
 
