@@ -26,7 +26,7 @@ module ApiBanking
           self.endpoints = {
             SocialBankingService:            'https://sky.yesbank.in/app/live/SocialBankingServiceHttpService',
             FundsTransferByCustomerService:  'https://sky.yesbank.in:444/app/live/ssl/fundsTransferByCustomerService',
-            FundsTransferByCustomerService2:  'https://sky.yesbank.in:444/app/live/fundsTransferByCustomerService2'
+            FundsTransferByCustomerService2:  'https://sky.yesbank.in/app/live/fundsTransferByCustomerService2'
           }          
         end
       end
