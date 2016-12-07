@@ -1,9 +1,9 @@
 module ApiBanking
   class FundsTransferByCustomerService2 < Soap12Client
-    
+
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1
-    
+
     attr_accessor :request, :result
 
     #transfer
@@ -11,26 +11,26 @@ module ApiBanking
       Address = Struct.new(:address1, :address2, :address3, :postalCode, :city, :stateOrProvince, :country)
       Beneficiary = Struct.new(:fullName, :address, :accountNo, :accountIFSC, :mobileNo, :mmid, :beneCode)
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :debitAccountNo, :beneficiary, :transferAmount, :transferType, :purposeCode, :remitterToBeneficiaryInfo)
-    
+
       TransactionStatus = Struct.new(:statusCode, :subStatusCode, :bankReferenceNo, :beneficiaryReferenceNo)
       Result = Struct.new(:version, :uniqueResponseNo, :attemptNo, :transferType, :lowBalanceAlert, :transactionStatus)
     end
-    
+
     #getStatus
     module GetStatus
       Request = Struct.new(:version, :appID, :customerID, :requestReferenceNo)
       TransactionStatus = Struct.new(:statusCode, :subStatusCode, :bankReferenceNo, :beneficiaryReferenceNo)
       Result = Struct.new(:version, :transferType, :reqTransferType, :transactionDate, :transferAmount, :transferCurrencyCode, :transactionStatus)
     end
-    
+
     #getBalance
     module GetBalance
       Request = Struct.new(:version, :appID, :customerID, :AccountNumber)
       Result = Struct.new(:Version, :accountCurrencyCode, :accountBalanceAmount, :lowBalanceAlert)
     end
-        
-    def self.transfer(env, request)
-      reply = do_remote_call(env) do |xml|
+
+    def self.transfer(env, request, callbacks)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.transfer("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -47,7 +47,7 @@ module ApiBanking
                   xml.fullName request.beneficiary.fullName
                 end
                 xml.beneficiaryAddress do |xml|
-                  if request.beneficiary.address.kind_of? Transfer::Address 
+                  if request.beneficiary.address.kind_of? Transfer::Address
                     xml.address1 request.beneficiary.address.address1
                     xml.address2 request.beneficiary.address.address2 unless request.beneficiary.address.address2.nil?
                     xml.address3 request.beneficiary.address.address3 unless request.beneficiary.address.address3.nil?
@@ -72,11 +72,11 @@ module ApiBanking
           xml.remitterToBeneficiaryInfo request.remitterToBeneficiaryInfo
         end
       end
-      
+
       parse_reply(:transfer, reply)
     end
 
-    
+
     def self.get_status(env, request)
       reply = do_remote_call(env) do |xml|
         xml.getStatus("xmlns:ns" => SERVICE_NAMESPACE ) do
@@ -89,7 +89,7 @@ module ApiBanking
       end
       parse_reply(:getStatus, reply)
     end
-    
+
     def self.get_balance(env, request)
       reply = do_remote_call(env) do |xml|
         xml.getBalance("xmlns:ns" => SERVICE_NAMESPACE ) do
@@ -104,11 +104,11 @@ module ApiBanking
     end
 
     private
-    
+
     def self.uri()
         return '/fundsTransferByCustomerService2'
     end
-        
+
     def self.parse_reply(operationName, reply)
       if reply.kind_of?Fault
         return reply
@@ -144,18 +144,18 @@ module ApiBanking
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferAmount', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
               transactionStatus
-            )  
+            )
           when :getBalance
             return GetBalance::Result.new(
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:Version', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountBalanceAmount', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:lowBalanceAlert', 'ns' => SERVICE_NAMESPACE))
-            )   
-        end         
+            )
+        end
       end
     end
-    
+
     def url
       return '/fundsTransferByCustomerService2'
     end
