@@ -77,8 +77,8 @@ module ApiBanking
     end
 
 
-    def self.get_status(env, request)
-      reply = do_remote_call(env) do |xml|
+    def self.get_status(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.getStatus("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -90,8 +90,8 @@ module ApiBanking
       parse_reply(:getStatus, reply)
     end
 
-    def self.get_balance(env, request)
-      reply = do_remote_call(env) do |xml|
+    def self.get_balance(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.getBalance("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
