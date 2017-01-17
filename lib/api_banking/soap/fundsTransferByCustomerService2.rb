@@ -141,7 +141,7 @@ module ApiBanking
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferType', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:reqTransferType', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transactionDate', 'ns' => SERVICE_NAMESPACE)),
-              content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferAmount', 'ns' => SERVICE_NAMESPACE)),
+              BigDecimal.new(content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferAmount', 'ns' => SERVICE_NAMESPACE))),
               content_at(reply.at_xpath('//ns:getStatusResponse/ns:transferCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
               transactionStatus
             )
@@ -149,7 +149,7 @@ module ApiBanking
             return GetBalance::Result.new(
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:Version', 'ns' => SERVICE_NAMESPACE)),
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
-              content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountBalanceAmount', 'ns' => SERVICE_NAMESPACE)),
+              BigDecimal.new(content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountBalanceAmount', 'ns' => SERVICE_NAMESPACE))),
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:lowBalanceAlert', 'ns' => SERVICE_NAMESPACE))
             )
         end
