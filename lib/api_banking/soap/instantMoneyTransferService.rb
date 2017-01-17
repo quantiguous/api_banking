@@ -1,11 +1,11 @@
 module ApiBanking
   class InstantMoneyTransferService < Soap12Client
-    
+
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1
-    
+
     attr_accessor :request, :result
-    
+
     module AddBeneficiary
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :beneficiaryMobileNo, :beneficiaryName, :beneficiaryAddress)
       Address = Struct.new(:addressLine, :cityName, :postalCode)
@@ -27,8 +27,8 @@ module ApiBanking
 
     module GetBeneficiaries
       Request = Struct.new(:uniqueRequestNo, :appID, :customerID, :dateRange, :numBeneficiaries)
-    
-      DateRange = Struct.new(:fromDate, :toDate)  
+
+      DateRange = Struct.new(:fromDate, :toDate)
       Beneficiary = Struct.new(:beneficiaryName, :beneficiaryMobileNo, :registrationDate, :addressLine, :postalCode)
       BeneficiariesArray = Struct.new(:beneficiary)
 
@@ -41,22 +41,22 @@ module ApiBanking
       Result = Struct.new(:uniqueResponseNo, :initiateTransferResult)
       TransferResult = Struct.new(:bankReferenceNo, :imtReferenceNo)
     end
-    
+
     class << self
       attr_accessor :configuration
     end
-        
+
     def self.configure
       self.configuration ||= Configuration.new
       yield(configuration)
     end
-    
+
     class Configuration
       attr_accessor :environment, :proxy, :timeout
     end
-        
-    def self.transfer(env, request)
-      reply = do_remote_call(env) do |xml|
+
+    def self.transfer(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.initiateTransfer("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -69,12 +69,12 @@ module ApiBanking
           xml['ns'].remitterToBeneficiaryInfo request.remitterToBeneficiaryInfo
         end
       end
-      
+
       parse_reply(:initiateTransfer, reply)
     end
 
-    def self.add_beneficiary(env, request)
-      reply = do_remote_call(env) do |xml|
+    def self.add_beneficiary(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.addBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -84,7 +84,7 @@ module ApiBanking
           xml['ns'].beneficiaryMobileNo request.beneficiaryMobileNo
           xml['ns'].beneficiaryName request.beneficiaryName
           xml['ns'].beneficiaryAddress do  |xml|
-            if request.beneficiaryAddress.kind_of? AddBeneficiary::Address 
+            if request.beneficiaryAddress.kind_of? AddBeneficiary::Address
               xml.addressLine request.beneficiaryAddress.addressLine
               xml.cityName request.beneficiaryAddress.cityName unless request.beneficiaryAddress.cityName.nil?
               xml.postalCode request.beneficiaryAddress.postalCode unless request.beneficiaryAddress.postalCode.nil?
@@ -94,12 +94,12 @@ module ApiBanking
           end
         end
       end
-      
+
       parse_reply(:addBeneficiary, reply)
     end
 
-    def self.delete_beneficiary(env, request)
-      reply = do_remote_call(env) do |xml|
+    def self.delete_beneficiary(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.deleteBeneficiary("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -109,12 +109,12 @@ module ApiBanking
           xml['ns'].beneficiaryMobileNo request.beneficiaryMobileNo
         end
       end
-      
+
       parse_reply(:deleteBeneficiary, reply)
     end
 
-    def self.get_beneficiaries(env, request)
-      reply = do_remote_call(env) do |xml|
+    def self.get_beneficiaries(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.getBeneficiaries("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -130,8 +130,8 @@ module ApiBanking
       parse_reply(:getBeneficiaries, reply)
     end
 
-    def self.cancel_transfer(env, request)
-      reply = do_remote_call(env) do |xml|
+    def self.cancel_transfer(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.cancelTransfer("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -142,12 +142,12 @@ module ApiBanking
           xml['ns'].reasonToCancel request.reasonToCancel
         end
       end
-      
+
       parse_reply(:cancelTransfer, reply)
     end
-  
+
     private
- 
+
     def self.parse_reply(operationName, reply)
       if reply.kind_of?Fault
         return reply

@@ -1,11 +1,11 @@
 module ApiBanking
   class SocialBankingService < Soap12Client
-    
+
     SERVICE_NAMESPACE = 'http://www.quantiguous.com/services'
     SERVICE_VERSION = 1
-    
+
     attr_accessor :request, :result
-    
+
     #getTransactions
     module GetTransactions
       Request = Struct.new(:version, :appID, :customerIdentity, :deviceID, :accountIdentity, :numTransactions)
@@ -13,7 +13,7 @@ module ApiBanking
       CustomerAlternateID = Struct.new(:mobileNo, :emailID, :twitterID, :genericID)
       GenericID = Struct.new(:idType, :idValue)
       AccountIdentity = Struct.new(:accountNo, :registeredAccount)
-      
+
       Transaction = Struct.new(:transactionID, :recordDate, :transactionType, :currencyCode, :amount, :narrative)
       Result = Struct.new(:version, :customerID, :accountNo, :numTransactions, :transactionsArray)
     end
@@ -21,18 +21,18 @@ module ApiBanking
     class << self
       attr_accessor :configuration
     end
-        
+
     def self.configure
       self.configuration ||= Configuration.new
       yield(configuration)
     end
-    
+
     class Configuration
       attr_accessor :environment, :proxy, :timeout
     end
-    
-    def self.getTransactions(env, request)
-      reply = do_remote_call(env) do |xml|
+
+    def self.getTransactions(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
         xml.getTransactions("xmlns:ns" => SERVICE_NAMESPACE ) do
           xml.parent.namespace = xml.parent.namespace_definitions.first
           xml['ns'].version SERVICE_VERSION
@@ -63,7 +63,7 @@ module ApiBanking
       end
       parse_reply(:getTransactions, reply)
     end
-    
+
     private
 
     def self.uri()
@@ -76,7 +76,7 @@ module ApiBanking
       else
         case operationName
           when :getTransactions
-            txnArray = Array.new 
+            txnArray = Array.new
             i = 1
             numTxns = content_at(reply.at_xpath("//ns:getTransactionsResponse/ns:numTransactions", 'ns' => SERVICE_NAMESPACE)).to_i
             until i > numTxns
@@ -98,7 +98,7 @@ module ApiBanking
               txnArray.size,
               txnArray
             )
-        end         
+        end
       end
     end
 
