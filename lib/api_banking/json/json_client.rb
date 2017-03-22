@@ -3,26 +3,25 @@ module ApiBanking
 
   class JsonClient
 
-    def self.do_remote_call(dataHash, callbacks = nil)
+    def self.do_remote_call(env, dataHash, callbacks = nil)
       options = {}
       options[:method] = :post
 
       add_signature(dataHash)
       options[:body] = JSON.generate(dataHash)
 
-      options[:headers] = {'Content-Type' => "application/json; charset=utf-8"}
+      options[:headers] = {'Content-Type' => "application/json; charset=utf-8", 'User-Agent' => "Quantiguous; API Banking, Ruby Gem #{ApiBanking::VERSION}"}
 
-      options[:proxy] = self.configuration.proxy
-      options[:timeout] = self.configuration.timeout
+      set_options_for_environment(env, options)
+      set_params_for_environment(env, options)
 
-      set_options_for_environment(options)
-      set_params_for_environment(options)
-
-      request = Typhoeus::Request.new(self.configuration.environment.url + uri, options)
+      request = Typhoeus::Request.new(env.endpoints[self.name.split('::').last.to_sym], options)
 
       callbacks.before_send.call(request) if (callbacks && callbacks.before_send.respond_to?(:call))
       response = request.run
       callbacks.on_complete.call(request.response) if (callbacks && callbacks.on_complete.respond_to?(:call))
+      
+      Thread.current[:last_response] = response
 
       parse_response(response)
     end
@@ -31,34 +30,37 @@ module ApiBanking
     private
 
     def self.add_signature(dataHash)
-      dataHash[:Single_Payment_Corp_Req][:Signature] = {}
-      dataHash[:Single_Payment_Corp_Req][:Signature][:Signature] = 'Signature'
+      dataHash.first[1][:Signature] = {}
+      dataHash.first[1][:Signature][:Signature] = 'Signature'
     end
-
-    def self.set_params_for_environment(options)
+    
+    def self.set_params_for_environment(env, options)
       params = {}
-      params[:client_id] = self.configuration.environment.client_id
-      params[:client_secret] = self.configuration.environment.client_secret
+      params[:client_id] = env.client_id
+      params[:client_secret] = env.client_secret
       options[:params] = params
     end
 
-    def self.set_options_for_environment(options)
-      if self.configuration.environment.kind_of?ApiBanking::Environment::RBL::UAT
-        options[:userpwd] = "#{self.configuration.environment.user}:#{self.configuration.environment.password}"
-        options[:cainfo] = self.configuration.environment.ssl_ca_file
-        options[:sslkey] = self.configuration.environment.ssl_client_key
-        options[:sslcert] = self.configuration.environment.ssl_client_cert
+    def self.set_options_for_environment(env, options)
+      if env.kind_of?ApiBanking::Environment::RBL::UAT
+        options[:userpwd] = "#{env.user}:#{env.password}"
+        options[:cainfo] = env.ssl_ca_file
+        options[:sslkey] = env.ssl_client_key
+        options[:sslcert] = env.ssl_client_cert
         options[:ssl_verifypeer] = true
       end
       puts "#{options}"
+      puts env
     end
 
     def self.parse_response(response)
+      p response.response_body
+
       if response.success?
-        if response.headers['Content-Type'] =~ /json/ then
+        if response.headers['Content-Type'] =~ /json/
           j = JSON::parse(response.response_body)
-          if j[:Status] = 'FAILED' then
-            return Fault.new(j[:Status], j.first[1]['Header']['Error_Cde'], j.first[1]['Header']['Error_Desc'])
+          if j.first[1]['Header']['Status'] == 'FAILED'
+            return Fault.new(j.first[1]['Header']['Status'], j.first[1]['Header']['Error_Cde'], j.first[1]['Header']['Error_Desc'])
           end
           return j
         end
@@ -68,7 +70,7 @@ module ApiBanking
         return Fault.new(response.code, "", response.return_message)
       else
         # http status indicating error
-        if response.headers['Content-Type'] =~ /xml/ then
+        if response.headers['Content-Type'] =~ /xml/
            reply = Nokogiri::XML(response.response_body)
 
            # service failures return a fault
@@ -77,7 +79,7 @@ module ApiBanking
            end
 
            # datapower failures return an xml
-           unless reply.at_xpath('//errorResponse').nil? then
+           unless reply.at_xpath('//errorResponse').nil?
              return parse_dp_reply(reply)
            end
 
@@ -98,6 +100,5 @@ module ApiBanking
       reasonText   = content_at(reply.at_xpath('//soapenv12:Fault/soapenv12:Reason/soapenv12:Text', 'soapenv12' => 'http://www.w3.org/2003/05/soap-envelope'))
       return Fault.new(code, subcode, reasonText)
     end
-
   end
 end
