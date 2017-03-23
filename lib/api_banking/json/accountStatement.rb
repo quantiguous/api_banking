@@ -9,9 +9,8 @@ module ApiBanking
     ReqBody = Struct.new(:accountNo, :transactionType, :fromDate, :toDate)
     Request = Struct.new(:header, :body)
 
-    AccountBalances = Struct.new(:accountNo, :availableBalance, :branchId, :currencyCode, :fFDBalance, :floatingBalance, :ledgerBalance, :userDefinedBalance)
     Transactions = Struct.new(:transactionDateTime, :transactionType, :amount, :narrative, :referenceNo, :balance)
-    Result = Struct.new(:accountBalances, :transactions)
+    Result = Struct.new(:transactions)
 
     class << self
       attr_accessor :configuration
@@ -66,37 +65,6 @@ module ApiBanking
       else
         case operationName
           when :getStatement
-            
-          availableBalance = parsed_money(
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['availableBalance']['amountValue'], 
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['availableBalance']['currencyCode']
-                            )
-          fFDBalance = parsed_money(
-                        reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['fFDBalance']['amountValue'],
-                        reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['fFDBalance']['currencyCode']
-                      )
-          floatingBalance = parsed_money(
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['floatingBalance']['amountValue'],
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['floatingBalance']['currencyCode']
-                            )
-          ledgerBalance = parsed_money(
-                            reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['ledgerBalance']['amountValue'],
-                            reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['ledgerBalance']['currencyCode']
-                          )
-          userDefinedBalance = parsed_money(
-                                reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['userDefinedBalance']['amountValue'],
-                                reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['userDefinedBalance']['currencyCode']
-                              )
-          accountBalances = AccountStatement::AccountBalances.new(
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['acid'],
-                              availableBalance,
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['branchId'],
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['currencyCode'],
-                              fFDBalance,
-                              floatingBalance,
-                              ledgerBalance,
-                              userDefinedBalance
-                            )
           sortedTxnArray = Array.new
           txnArray = reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].sort_by { |e| DateTime.parse(e['pstdDate'])}
           txnArray.each do |txn|
@@ -119,7 +87,6 @@ module ApiBanking
                                   )
           end
           return AccountStatement::Result.new(
-                    accountBalances,
                     sortedTxnArray
                  )
         end
