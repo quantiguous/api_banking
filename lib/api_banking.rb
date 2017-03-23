@@ -1,5 +1,6 @@
 require "nokogiri"
 require "typhoeus"
+require "money"
 require "api_banking/version"
 require_relative "api_banking/config"
 require_relative "api_banking/environment/rbl/env"
@@ -24,6 +25,7 @@ require_relative "api_banking/soap/aadhaarVerificationService"
 
 require_relative "api_banking/json/json_client"
 require_relative "api_banking/json/singlePayment"
+require_relative "api_banking/json/accountStatement"
 
 module ApiBanking
 
