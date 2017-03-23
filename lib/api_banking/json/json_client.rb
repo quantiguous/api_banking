@@ -60,7 +60,7 @@ module ApiBanking
         if response.headers['Content-Type'] =~ /json/
           j = JSON::parse(response.response_body)
           if j.first[1]['Header']['Status'] == 'FAILED'
-            return Fault.new(j.first[1]['Header']['Status'], j.first[1]['Header']['Error_Cde'], j.first[1]['Header']['Error_Desc'])
+            return Fault.new(j.first[1]['Header']['Error_Cde'], nil, j.first[1]['Header']['Error_Desc'])
           end
           return j
         end
