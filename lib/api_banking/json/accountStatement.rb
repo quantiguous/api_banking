@@ -5,7 +5,7 @@ module ApiBanking
 
     attr_accessor :request, :result
 
-    ReqHeader = Struct.new(:tranID, :corpID, :approverID)
+    ReqHeader = Struct.new(:corpID, :approverID)
     ReqBody = Struct.new(:accountNo, :transactionType, :fromDate, :toDate)
     Request = Struct.new(:header, :body)
 
@@ -31,7 +31,7 @@ module ApiBanking
       dataHash[:Acc_Stmt_DtRng_Req][:Header] = {}
       dataHash[:Acc_Stmt_DtRng_Req][:Body] = {}
 
-      dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = request.header.tranID
+      dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = '0'
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Corp_ID] = request.header.corpID
       # the tags Maker_ID and Checker_ID have been removed since Schema Validation Error is returned when these are sent in the request.
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Approver_ID] = request.header.approverID
