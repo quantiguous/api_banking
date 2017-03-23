@@ -2,6 +2,7 @@ module ApiBanking
   class AccountStatement < JsonClient
 
     SERVICE_VERSION = 1
+    CODE_NO_TXN_FOUND = '8504'
 
     attr_accessor :request, :result
 
@@ -61,12 +62,12 @@ module ApiBanking
 
     def self.parse_reply(operationName, reply)
       if reply.kind_of?Fault
-        return reply
+        reply.code == CODE_NO_TXN_FOUND ? AccountStatement::Result.new([]) : reply
       else
         case operationName
           when :getStatement
           sortedTxnArray = Array.new
-          txnArray = reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].sort_by { |e| DateTime.parse(e['pstdDate'])}
+          txnArray = reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].sort_by { |e| parsed_datetime(e['pstdDate'])}
           txnArray.each do |txn|
             txnAmt = parsed_money(
                         txn['transactionSummary']['txnAmt']['amountValue'],
