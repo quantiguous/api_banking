@@ -1,5 +1,6 @@
 require "nokogiri"
 require "typhoeus"
+require "money"
 require "api_banking/version"
 require_relative "api_banking/config"
 require_relative "api_banking/environment/rbl/env"

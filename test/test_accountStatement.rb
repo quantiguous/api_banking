@@ -5,8 +5,6 @@ class TestAccountStatement < Minitest::Test
   def test_it_returns_an_account_statement
     
     header = ApiBanking::AccountStatement::ReqHeader.new()
-    lastBalance = ApiBanking::AccountStatement::LastBalance.new()
-    paginationDetails = ApiBanking::AccountStatement::PaginationDetails.new()
     reqBody = ApiBanking::AccountStatement::ReqBody.new()
     request = ApiBanking::AccountStatement::Request.new()
     
@@ -17,16 +15,7 @@ class TestAccountStatement < Minitest::Test
     reqBody.accountNo = '408888558888'
     reqBody.tranType = 'D'
     reqBody.fromDate = '2017-03-02'
-    reqBody.paginationDetails = paginationDetails
     reqBody.toDate = '2017-03-16'
-    
-    lastBalance.amountValue = ''
-    lastBalance.currencyCode = ''
-    paginationDetails.lastBalance = lastBalance
-    paginationDetails.lastPostedDate = ''
-    paginationDetails.lastTxnDate = ''
-    paginationDetails.lastTxnID = ''
-    paginationDetails.lastTxnSrlNo = ''
     
     request.header = header
     request.body = reqBody

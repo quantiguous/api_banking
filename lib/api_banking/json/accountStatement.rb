@@ -6,18 +6,12 @@ module ApiBanking
     attr_accessor :request, :result
 
     ReqHeader = Struct.new(:tranID, :corpID, :approverID)
-    LastBalance = Struct.new(:amountValue, :currencyCode)
-    PaginationDetails = Struct.new(:lastBalance, :lastPostedDate, :lastTxnDate, :lastTxnID, :lastTxnSrlNo)
     ReqBody = Struct.new(:accountNo, :tranType, :fromDate, :paginationDetails, :toDate)
     Request = Struct.new(:header, :body)
 
-    RepHeader = Struct.new(:tranID, :corpID, :makerID, :checkerID, :approverID, :status, :errorCode, :errorDescription)
-    Balances = Struct.new(:amountValue, :currencyCode)
     AccountBalances = Struct.new(:acid, :availableBalance, :branchId, :currencyCode, :fFDBalance, :floatingBalance, :ledgerBalance, :userDefinedBalance)
-    TransactionSummary = Struct.new(:instrumentId, :txnAmt, :txnDate, :txnDesc, :txnType)
-    TransactionDetails = Struct.new(:pstdDate, :transactionSummary, :txnBalance, :txnCat, :txnId, :txnSrlNo, :valueDate)
-    RepBody = Struct.new(:accountBalances, :transactionDetails)
-    Result = Struct.new(:header, :body)
+    Transactions = Struct.new(:transactionDateTime, :transactionType, :amount, :narrative, :referenceNo, :balance)
+    Result = Struct.new(:accountBalances, :transactionDetails)
 
     class << self
       attr_accessor :configuration
@@ -49,12 +43,12 @@ module ApiBanking
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details] = {}
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Balance] = {}
 
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Balance][:Amount_Value] = request.body.paginationDetails.lastBalance.amountValue unless request.body.paginationDetails.nil?
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Balance][:Currency_Code] = request.body.paginationDetails.lastBalance.currencyCode unless request.body.paginationDetails.nil?
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Pstd_Date] = request.body.paginationDetails.lastPostedDate unless request.body.paginationDetails.nil?
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_Date] = request.body.paginationDetails.lastTxnDate unless request.body.paginationDetails.nil?
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_Id] = request.body.paginationDetails.lastTxnID unless request.body.paginationDetails.nil?
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_SrlNo] = request.body.paginationDetails.lastTxnSrlNo unless request.body.paginationDetails.nil?
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Balance][:Amount_Value] = ''
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Balance][:Currency_Code] = ''
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Pstd_Date] = ''
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_Date] = ''
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_Id] = ''
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_SrlNo] = ''
 
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:To_Dt] = request.body.toDate
 
@@ -71,32 +65,24 @@ module ApiBanking
       else
         case operationName
           when :getStatement
-          header = AccountStatement::RepHeader.new(reply['Acc_Stmt_DtRng_Res']['Header']['TranID'], 
-                                                   reply['Acc_Stmt_DtRng_Res']['Header']['TranID'],
-                                                   reply['Acc_Stmt_DtRng_Res']['Header']['Corp_ID'],
-                                                   reply['Acc_Stmt_DtRng_Res']['Header']['Approver_ID'],
-                                                   reply['Acc_Stmt_DtRng_Res']['Header']['Status'],
-                                                   reply['Acc_Stmt_DtRng_Res']['Header']['Error_Cde'],
-                                                   reply['Acc_Stmt_DtRng_Res']['Header']['Error_Desc']
-                                                  )
-
-          availableBalance = AccountStatement::Balances.new(
-                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['availableBalance']['amountValue'],
+            
+          availableBalance = parsed_money(
+                              reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['availableBalance']['amountValue'], 
                               reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['availableBalance']['currencyCode']
                             )
-          fFDBalance = AccountStatement::Balances.new(
+          fFDBalance = parsed_money(
                         reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['fFDBalance']['amountValue'],
                         reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['fFDBalance']['currencyCode']
                       )
-          floatingBalance = AccountStatement::Balances.new(
+          floatingBalance = parsed_money(
                               reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['floatingBalance']['amountValue'],
                               reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['floatingBalance']['currencyCode']
                             )
-          ledgerBalance = AccountStatement::Balances.new(
+          ledgerBalance = parsed_money(
                             reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['ledgerBalance']['amountValue'],
                             reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['ledgerBalance']['currencyCode']
                           )
-          userDefinedBalance = AccountStatement::Balances.new(
+          userDefinedBalance = parsed_money(
                                 reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['userDefinedBalance']['amountValue'],
                                 reply['Acc_Stmt_DtRng_Res']['Body']['accountBalances']['userDefinedBalance']['currencyCode']
                               )
@@ -110,40 +96,41 @@ module ApiBanking
                               ledgerBalance,
                               userDefinedBalance
                             )
-          transactionDetails = Array.new
-          (0..reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].count-1).each do |i|
-            txnAmt = AccountStatement::Balances.new(
-                        reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['transactionSummary']['txnAmt']['amountValue'],
-                        reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['transactionSummary']['txnAmt']['currencyCode']
+          sortedTxnArray = Array.new
+          txnArray = reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].sort_by { |e| DateTime.parse(e['pstdDate'])}
+          txnArray.each do |txn|
+            txnAmt = parsed_money(
+                        txn['transactionSummary']['txnAmt']['amountValue'],
+                        txn['transactionSummary']['txnAmt']['currencyCode']
                       )
-            txnBalance = AccountStatement::Balances.new(
-                          reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['txnBalance']['amountValue'],
-                          reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['txnBalance']['currencyCode']
+            txnBalance = parsed_money(
+                          txn['txnBalance']['amountValue'],
+                          txn['txnBalance']['currencyCode']
                         )
-            transactionSummary = AccountStatement::TransactionSummary.new(
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['transactionSummary']['instrumentId'],
-                                  txnAmt,
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['transactionSummary']['txnDate'],
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['transactionSummary']['txnDesc'],
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['transactionSummary']['txnType']
-                                )
-            transactionDetails << AccountStatement::TransactionDetails.new(
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['pstdDate'],
-                                  transactionSummary,
-                                  txnBalance,
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['txnCat'],
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['txnId'],
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['txnSrlNo'],
-                                  reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'][i]['valueDate']
-                              )
+
+            sortedTxnArray << AccountStatement::Transactions.new(
+                                    parsed_datetime(txn['pstdDate']),
+                                    txn['transactionSummary']['txnType'],
+                                    txnAmt,
+                                    txn['transactionSummary']['txnDesc'],
+                                    txn['txnId'],
+                                    txnBalance
+                                  )
           end
-          body = AccountStatement::RepBody.new(
+          return AccountStatement::Result.new(
                     accountBalances,
-                    transactionDetails
+                    sortedTxnArray
                  )
-          return AccountStatement::Result.new(header, body)            
         end
       end
+    end
+
+    def self.parsed_money(amount, currency)
+      Money.new(amount, currency)
+    end
+
+    def self.parsed_datetime(datetime)
+      DateTime.parse(datetime)
     end
   end
 end
