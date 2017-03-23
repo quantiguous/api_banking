@@ -6,12 +6,12 @@ module ApiBanking
     attr_accessor :request, :result
 
     ReqHeader = Struct.new(:tranID, :corpID, :approverID)
-    ReqBody = Struct.new(:accountNo, :tranType, :fromDate, :paginationDetails, :toDate)
+    ReqBody = Struct.new(:accountNo, :transactionType, :fromDate, :toDate)
     Request = Struct.new(:header, :body)
 
-    AccountBalances = Struct.new(:acid, :availableBalance, :branchId, :currencyCode, :fFDBalance, :floatingBalance, :ledgerBalance, :userDefinedBalance)
+    AccountBalances = Struct.new(:accountNo, :availableBalance, :branchId, :currencyCode, :fFDBalance, :floatingBalance, :ledgerBalance, :userDefinedBalance)
     Transactions = Struct.new(:transactionDateTime, :transactionType, :amount, :narrative, :referenceNo, :balance)
-    Result = Struct.new(:accountBalances, :transactionDetails)
+    Result = Struct.new(:accountBalances, :transactions)
 
     class << self
       attr_accessor :configuration
@@ -34,10 +34,11 @@ module ApiBanking
 
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = request.header.tranID
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Corp_ID] = request.header.corpID
+      # the tags Maker_ID and Checker_ID have been removed since Schema Validation Error is returned when these are sent in the request.
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Approver_ID] = request.header.approverID
 
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Acc_No] = request.body.accountNo
-      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Tran_Type] = request.body.tranType
+      dataHash[:Acc_Stmt_DtRng_Req][:Body][:Tran_Type] = request.body.transactionType
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:From_Dt] = request.body.fromDate
       
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details] = {}
@@ -49,7 +50,7 @@ module ApiBanking
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_Date] = ''
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_Id] = ''
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:Pagination_Details][:Last_Txn_SrlNo] = ''
-
+      
       dataHash[:Acc_Stmt_DtRng_Req][:Body][:To_Dt] = request.body.toDate
 
       reply = do_remote_call(env, dataHash, callbacks)

@@ -13,7 +13,7 @@ class TestAccountStatement < Minitest::Test
     header.approverID      = 'A001'
     
     reqBody.accountNo = '408888558888'
-    reqBody.tranType = 'D'
+    reqBody.transactionType = 'D'
     reqBody.fromDate = '2017-03-02'
     reqBody.toDate = '2017-03-16'
     
