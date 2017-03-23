@@ -8,7 +8,6 @@ class TestAccountStatement < Minitest::Test
     reqBody = ApiBanking::AccountStatement::ReqBody.new()
     request = ApiBanking::AccountStatement::Request.new()
     
-    header.tranID          = rand.to_s[2..6]
     header.corpID          = 'QNTGS'
     header.approverID      = 'A001'
     
