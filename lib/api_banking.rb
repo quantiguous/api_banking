@@ -26,6 +26,7 @@ require_relative "api_banking/soap/aadhaarVerificationService"
 require_relative "api_banking/json/json_client"
 require_relative "api_banking/json/singlePayment"
 require_relative "api_banking/json/accountStatement"
+require_relative "api_banking/json/getAccountBalance"
 
 module ApiBanking
 
