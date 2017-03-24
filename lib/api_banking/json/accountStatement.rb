@@ -95,7 +95,7 @@ module ApiBanking
     end
 
     def self.parsed_money(amount, currency)
-      Money.new(amount, currency)
+      Money.from_amount(amount.to_d, currency)
     end
 
     def self.parsed_datetime(datetime)

@@ -13,7 +13,7 @@ VCR.configure do |c|
   c.default_cassette_options = {:record => :new_episodes}
 end
 
-Typhoeus::Config.verbose = true
+Typhoeus::Config.verbose = false
 
 ybl_uat = ApiBanking::Environment::YBL::UAT.new(ENV['API_UAT_USER'], ENV['API_UAT_PASSWORD'], ENV['API_UAT_CLIENT_ID'], ENV['API_UAT_CLIENT_SECRET']  )
 rbl_uat = ApiBanking::Environment::RBL::UAT.new(ENV['API_RBL_UAT_USER'], ENV['API_RBL_UAT_PASSWORD'], ENV['API_RBL_UAT_CLIENT_ID'], ENV['API_RBL_UAT_CLIENT_SECRET'], ENV['API_RBL_UAT_CLIENT_CERT'], ENV['API_RBL_UAT_CLIENT_KEY']  )
@@ -25,6 +25,7 @@ InstantMoneyTransferServiceEnvironment = ybl_uat
 FundsTransferByCustomerServiceEnvironment = ybl_uat
 SinglePaymentEnvironment = rbl_uat
 AccountStatementEnvironment = rbl_uat
+GetAccountBalanceEnvironment = rbl_uat
 DomesticRemittanceByPartnerServiceEnvironment = qg_aws
 NotificationServiceEnvironment = qg_aws
 InstantCreditServiceEnvironment = qg_aws
