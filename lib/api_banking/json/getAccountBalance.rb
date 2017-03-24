@@ -54,7 +54,7 @@ module ApiBanking
     end
 
     def self.parsed_money(amount, currency)
-      Money.from_amount(amount.to_f, currency)
+      Money.from_amount(amount.to_d, currency)
     end
   end
 end
