@@ -36,7 +36,7 @@ module ApiBanking
       dataHash[:Single_Payment_Corp_Req][:Header][:Corp_ID] = request.header.corpID
       dataHash[:Single_Payment_Corp_Req][:Header][:Maker_ID] = ''
       dataHash[:Single_Payment_Corp_Req][:Header][:Checker_ID] = ''
-      dataHash[:Single_Payment_Corp_Req][:Header][:Approver_ID] = ''
+      dataHash[:Single_Payment_Corp_Req][:Header][:Approver_ID] = request.header.approverID
 
       dataHash[:Single_Payment_Corp_Req][:Body][:Amount] = request.body.amount
       dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_No] = request.body.remitter.accountNo
@@ -50,8 +50,6 @@ module ApiBanking
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Mobile] = request.body.beneficiary.mobileNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Mode_of_Pay] = request.body.modeOfPay
       dataHash[:Single_Payment_Corp_Req][:Body][:Remarks] = request.body.remarks
-      
-      puts dataHash
 
       reply = do_remote_call(env, dataHash, callbacks)
 

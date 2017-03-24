@@ -8,7 +8,8 @@ module ApiBanking
           self.endpoints = {
             SinglePayment: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/payments/corp/payment',
             AccountStatement: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/cas/statement',
-            GetAccountBalance: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/accounts/balance/query'
+            GetAccountBalance: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/accounts/balance/query',
+            GetPaymentStatus: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/payments/corp/payment/query'
           }
         end
       end
