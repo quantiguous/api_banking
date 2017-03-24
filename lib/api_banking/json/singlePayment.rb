@@ -5,12 +5,13 @@ module ApiBanking
 
     attr_accessor :request, :result
 
-    #transfer
-    Remitter = Struct.new(:accountNo, :accountName, :accountIFSC, :mobileNo, :tranParticulars, :partTranRemarks)
-    Beneficiary = Struct.new(:fullName, :address, :accountNo, :accountIFSC, :bankName, :bankCode, :branchCode, :email, :mobileNo, :mmid, :tranParticulars, :partTranRemarks)
-    Request = Struct.new(:uniqueRequestNo, :corpID, :makerID, :checkerID, :approverID, :remitter, :beneficiary, :amount, :issueBranchCode, :modeOfPay, :remarks, :rptCode)
+    ReqHeader = Struct.new(:tranID, :corpID, :approverID)
+    Remitter = Struct.new(:accountNo, :accountName)
+    Beneficiary = Struct.new(:accountIFSC, :accountNo, :fullName, :address, :email, :mobileNo)
+    ReqBody = Struct.new(:amount, :remitter, :beneficiary, :modeOfPay, :remarks)
+    Request = Struct.new(:header, :body)
 
-    Result = Struct.new(:status, :errorCode, :errorDescription)
+    Result = Struct.new(:statusCode, :bankReferenceNo, :transferType)
 
     class << self
       attr_accessor :configuration
@@ -25,67 +26,50 @@ module ApiBanking
       attr_accessor :environment, :proxy, :timeout
     end
 
-    def self.transfer(request, callbacks = nil)
+    def self.transfer(env, request, callbacks = nil)
       dataHash = {}
       dataHash[:Single_Payment_Corp_Req] = {}
       dataHash[:Single_Payment_Corp_Req][:Header] = {}
       dataHash[:Single_Payment_Corp_Req][:Body] = {}
 
-      dataHash[:Single_Payment_Corp_Req][:Header][:TranID] = request.uniqueRequestNo
-      dataHash[:Single_Payment_Corp_Req][:Header][:Corp_ID] = request.corpID
-      dataHash[:Single_Payment_Corp_Req][:Header][:Maker_ID] = request.makerID
-      dataHash[:Single_Payment_Corp_Req][:Header][:Checker_ID] = request.checkerID
-      dataHash[:Single_Payment_Corp_Req][:Header][:Approver_ID] = request.approverID
+      dataHash[:Single_Payment_Corp_Req][:Header][:TranID] = request.header.tranID
+      dataHash[:Single_Payment_Corp_Req][:Header][:Corp_ID] = request.header.corpID
+      dataHash[:Single_Payment_Corp_Req][:Header][:Maker_ID] = ''
+      dataHash[:Single_Payment_Corp_Req][:Header][:Checker_ID] = ''
+      dataHash[:Single_Payment_Corp_Req][:Header][:Approver_ID] = ''
 
-      dataHash[:Single_Payment_Corp_Req][:Body][:Amount] = request.amount
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_No] = request.remitter.accountNo
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_Name] = request.remitter.accountName
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_IFSC] = request.remitter.accountIFSC
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Mobile] = request.remitter.mobileNo
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_TrnParticulars] = request.remitter.tranParticulars
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_PartTrnRmks] = request.remitter.partTranRemarks
+      dataHash[:Single_Payment_Corp_Req][:Body][:Amount] = request.body.amount
+      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_No] = request.body.remitter.accountNo
+      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_Name] = request.body.remitter.accountName
 
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_IFSC] = request.beneficiary.accountIFSC
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Acct_No] = request.beneficiary.accountNo
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Name] = request.beneficiary.fullName
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Address] = request.beneficiary.address
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_BankName] = request.beneficiary.bankName
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_BankCd] = request.beneficiary.bankCode
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_BranchCd] = request.beneficiary.branchCode
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Email] = request.beneficiary.email
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Mobile] = request.beneficiary.mobileNo
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_TrnParticulars] = request.beneficiary.tranParticulars
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_PartTrnRmks] = request.beneficiary.partTranRemarks
-      dataHash[:Single_Payment_Corp_Req][:Body][:Issue_BranchCd] = request.issueBranchCode
-      dataHash[:Single_Payment_Corp_Req][:Body][:Mode_of_Pay] = request.modeOfPay
-      dataHash[:Single_Payment_Corp_Req][:Body][:Remarks] = request.remarks
-      dataHash[:Single_Payment_Corp_Req][:Body][:RptCode] = request.rptCode
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_IFSC] = request.body.beneficiary.accountIFSC
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Acct_No] = request.body.beneficiary.accountNo
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Name] = request.body.beneficiary.fullName
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Address] = request.body.beneficiary.address
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Email] = request.body.beneficiary.email
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Mobile] = request.body.beneficiary.mobileNo
+      dataHash[:Single_Payment_Corp_Req][:Body][:Mode_of_Pay] = request.body.modeOfPay
+      dataHash[:Single_Payment_Corp_Req][:Body][:Remarks] = request.body.remarks
+      
+      puts dataHash
 
+      reply = do_remote_call(env, dataHash, callbacks)
 
-      reply = do_remote_call(dataHash, callbacks)
-
-      parse_reply(:transferResponse, reply)
+      parse_reply(reply, request.body.modeOfPay)
     end
 
 
     private
 
-    def self.uri()
-      if self.configuration.environment.kind_of?ApiBanking::Environment::RBL::UAT
-        return '/test/sb/rbl/v1/payments/corp/payment'
-      else
-        return '/sb/rbl/v1/payments/corp/payment'
-      end
-    end
-
-    def self.parse_reply(operationName, reply)
+    def self.parse_reply(reply, transferType)
       if reply.kind_of?Fault
-        return reply
+        reply
       else
-        puts reply
-        case operationName
-          when :transferResponse
-        end
+        SinglePayment::Result.new(
+          reply['Single_Payment_Corp_Resp']['Header']['Status'],
+          reply['Single_Payment_Corp_Resp']['Body']['UTRNo'],
+          transferType
+        )
       end
     end
 
