@@ -12,6 +12,7 @@ class TestSinglePayment < Minitest::Test
 
     header.tranID          = rand.to_s[2..6]
     header.corpID          = 'QNTGS'
+    header.approverID      = ''
     
     reqBody.amount           = '200000'
     reqBody.modeOfPay        = 'NEFT'
