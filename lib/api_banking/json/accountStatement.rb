@@ -2,10 +2,11 @@ module ApiBanking
   class AccountStatement < JsonClient
 
     SERVICE_VERSION = 1
+    CODE_NO_TXN_FOUND = '8504'
 
     attr_accessor :request, :result
 
-    ReqHeader = Struct.new(:tranID, :corpID, :approverID)
+    ReqHeader = Struct.new(:corpID, :approverID)
     ReqBody = Struct.new(:accountNo, :transactionType, :fromDate, :toDate)
     Request = Struct.new(:header, :body)
 
@@ -31,7 +32,7 @@ module ApiBanking
       dataHash[:Acc_Stmt_DtRng_Req][:Header] = {}
       dataHash[:Acc_Stmt_DtRng_Req][:Body] = {}
 
-      dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = request.header.tranID
+      dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = '0'
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Corp_ID] = request.header.corpID
       # the tags Maker_ID and Checker_ID have been removed since Schema Validation Error is returned when these are sent in the request.
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Approver_ID] = request.header.approverID
@@ -61,12 +62,12 @@ module ApiBanking
 
     def self.parse_reply(operationName, reply)
       if reply.kind_of?Fault
-        return reply
+        reply.code == CODE_NO_TXN_FOUND ? AccountStatement::Result.new([]) : reply
       else
         case operationName
           when :getStatement
           sortedTxnArray = Array.new
-          txnArray = reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].sort_by { |e| DateTime.parse(e['pstdDate'])}
+          txnArray = reply['Acc_Stmt_DtRng_Res']['Body']['transactionDetails'].sort_by { |e| parsed_datetime(e['pstdDate'])}
           txnArray.each do |txn|
             txnAmt = parsed_money(
                         txn['transactionSummary']['txnAmt']['amountValue'],
