@@ -26,6 +26,7 @@ FundsTransferByCustomerServiceEnvironment = ybl_uat
 SinglePaymentEnvironment = rbl_uat
 AccountStatementEnvironment = rbl_uat
 GetAccountBalanceEnvironment = rbl_uat
+GetPaymentStatusEnvironment = rbl_uat
 DomesticRemittanceByPartnerServiceEnvironment = qg_aws
 NotificationServiceEnvironment = qg_aws
 InstantCreditServiceEnvironment = qg_aws
