@@ -48,7 +48,7 @@ module ApiBanking
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Acct_No] = request.body.beneficiary.accountNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Name] = request.body.beneficiary.fullName
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Address] = request.body.beneficiary.address
-      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_BankName] = 'RBL'
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_BankName] = request.body.beneficiary.accountIFSC[0..3]
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Email] = request.body.beneficiary.email
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Mobile] = request.body.beneficiary.mobileNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Mode_of_Pay] = request.body.modeOfPay
