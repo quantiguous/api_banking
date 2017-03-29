@@ -21,6 +21,7 @@ class TestSinglePayment < Minitest::Test
     remitter.accountNo        = '408888558888'
     remitter.accountName      = 'Gabriala Dcosta'
     remitter.accountIFSC      = 'RATN0000999'
+    remitter.mobileNo         = '9999999999'
     
     beneficiary.accountIFSC      = 'SBIN0017942'
     beneficiary.accountNo        = '1006211030035980'
@@ -58,6 +59,7 @@ class TestSinglePayment < Minitest::Test
     remitter.accountNo        = '408888558888'
     remitter.accountName      = 'Gabriala Dcosta'
     remitter.accountIFSC      = 'RATN0000999'
+    remitter.mobileNo         = '9999999999'
     
     beneficiary.accountIFSC      = 'UBIN0556688'
     beneficiary.accountNo        = '119551457077'
@@ -95,6 +97,7 @@ class TestSinglePayment < Minitest::Test
     remitter.accountNo        = '408888558888'
     remitter.accountName      = 'Gabriala Dcosta'
     remitter.accountIFSC      = 'RATN0000999'
+    remitter.mobileNo         = '9999999999'
     
     beneficiary.accountIFSC      = 'SBIN0017942'
     beneficiary.accountNo        = '1006211030035980'

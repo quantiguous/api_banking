@@ -6,7 +6,7 @@ module ApiBanking
     attr_accessor :request, :result
 
     ReqHeader = Struct.new(:tranID, :corpID, :approverID)
-    Remitter = Struct.new(:accountNo, :accountName, :accountIFSC)
+    Remitter = Struct.new(:accountNo, :accountName, :accountIFSC, :mobileNo)
     Beneficiary = Struct.new(:accountIFSC, :accountNo, :fullName, :address, :email, :mobileNo)
     ReqBody = Struct.new(:amount, :remitter, :beneficiary, :modeOfPay, :remarks)
     Request = Struct.new(:header, :body)
@@ -42,7 +42,7 @@ module ApiBanking
       dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_No] = request.body.remitter.accountNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_Name] = request.body.remitter.accountName
       dataHash[:Single_Payment_Corp_Req][:Body][:Debit_IFSC] = request.body.remitter.accountIFSC
-      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Mobile] = '9999000011'
+      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Mobile] = request.body.remitter.mobileNo
 
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_IFSC] = request.body.beneficiary.accountIFSC
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Acct_No] = request.body.beneficiary.accountNo
