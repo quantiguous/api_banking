@@ -6,7 +6,7 @@ module ApiBanking
     attr_accessor :request, :result
 
     ReqHeader = Struct.new(:tranID, :corpID, :approverID)
-    Remitter = Struct.new(:accountNo, :accountName)
+    Remitter = Struct.new(:accountNo, :accountName, :accountIFSC, :mobileNo)
     Beneficiary = Struct.new(:accountIFSC, :accountNo, :fullName, :address, :email, :mobileNo)
     ReqBody = Struct.new(:amount, :remitter, :beneficiary, :modeOfPay, :remarks)
     Request = Struct.new(:header, :body)
@@ -41,11 +41,14 @@ module ApiBanking
       dataHash[:Single_Payment_Corp_Req][:Body][:Amount] = request.body.amount
       dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_No] = request.body.remitter.accountNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Acct_Name] = request.body.remitter.accountName
+      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_IFSC] = request.body.remitter.accountIFSC
+      dataHash[:Single_Payment_Corp_Req][:Body][:Debit_Mobile] = request.body.remitter.mobileNo
 
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_IFSC] = request.body.beneficiary.accountIFSC
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Acct_No] = request.body.beneficiary.accountNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Name] = request.body.beneficiary.fullName
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Address] = request.body.beneficiary.address
+      dataHash[:Single_Payment_Corp_Req][:Body][:Ben_BankName] = request.body.beneficiary.accountIFSC[0..3]
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Email] = request.body.beneficiary.email
       dataHash[:Single_Payment_Corp_Req][:Body][:Ben_Mobile] = request.body.beneficiary.mobileNo
       dataHash[:Single_Payment_Corp_Req][:Body][:Mode_of_Pay] = request.body.modeOfPay
