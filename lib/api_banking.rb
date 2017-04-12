@@ -6,6 +6,7 @@ require_relative "api_banking/config"
 require_relative "api_banking/environment/rbl/env"
 require_relative "api_banking/environment/ybl/env"
 require_relative "api_banking/environment/qg/env"
+require_relative "api_banking/environment/local/env"
 
 require_relative "api_banking/soap/fault"
 require_relative "api_banking/soap/callbacks"
