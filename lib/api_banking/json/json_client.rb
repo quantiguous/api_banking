@@ -42,7 +42,7 @@ module ApiBanking
     end
 
     def self.set_options_for_environment(env, options)
-      if env.kind_of?ApiBanking::Environment::RBL::UAT
+      if env.kind_of?ApiBanking::Environment::RBL::UAT or env.kind_of?ApiBanking::Environment::RBL::PROD
         options[:userpwd] = "#{env.user}:#{env.password}"
         options[:cainfo] = env.ssl_ca_file
         options[:sslkey] = env.ssl_client_key
