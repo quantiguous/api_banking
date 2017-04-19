@@ -42,7 +42,7 @@ module ApiBanking
     end
 
     def self.set_options_for_environment(env, options)
-      if env.kind_of?ApiBanking::Environment::RBL::UAT
+      if env.kind_of?ApiBanking::Environment::RBL::UAT or env.kind_of?ApiBanking::Environment::RBL::PROD
         options[:userpwd] = "#{env.user}:#{env.password}"
         options[:cainfo] = env.ssl_ca_file
         options[:sslkey] = env.ssl_client_key
@@ -57,13 +57,14 @@ module ApiBanking
       p response.response_body
 
       if response.success?
-        if response.headers['Content-Type'] =~ /json/
+# RBL does not set the content-type correctly, it sends text/plain for json!        
+#        if response.headers['Content-Type'] =~ /json/
           j = JSON::parse(response.response_body)
           if j.first[1]['Header']['Status'] == 'FAILED'
             return Fault.new(j.first[1]['Header']['Error_Cde'], nil, j.first[1]['Header']['Error_Desc'])
           end
           return j
-        end
+#        end
       elsif response.timed_out?
         return Fault.new("502", "", "#{response.return_message}")
       elsif response.code == 0
