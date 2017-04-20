@@ -32,7 +32,7 @@ module ApiBanking
       dataHash[:Acc_Stmt_DtRng_Req][:Header] = {}
       dataHash[:Acc_Stmt_DtRng_Req][:Body] = {}
 
-      dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = '0'
+      dataHash[:Acc_Stmt_DtRng_Req][:Header][:TranID] = '00'
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Corp_ID] = request.header.corpID
       # the tags Maker_ID and Checker_ID have been removed since Schema Validation Error is returned when these are sent in the request.
       dataHash[:Acc_Stmt_DtRng_Req][:Header][:Approver_ID] = request.header.approverID
