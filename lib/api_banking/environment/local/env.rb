@@ -11,7 +11,7 @@ module ApiBanking
           FundsTransferByCustomerService2: "#{protocol}://#{host}:#{port}/fundsTransferByCustomerService2",
           InstantMoneyTransferService:     "#{protocol}://#{host}:#{port}/IMTService",
           DomesticRemittanceByPartnerService:    "#{protocol}://#{host}:#{port}/DomesticRemittanceByPartnerService",
-          NotificationService:             "#{protocol}://#{host}:#{port}/NotificationService",
+          NotificationService:             "#{protocol}://#{host}:#{port}/Apprise/NotificationService",
           InstantCreditService:            "#{protocol}://#{host}:#{port}/InstantCreditService",
           PrepaidCardManagementService:    "#{protocol}://#{host}:#{port}/PrepaidCardManagementService",
           PrepaidCardService:              "#{protocol}://#{host}:#{port}/PrepaidCardService",
