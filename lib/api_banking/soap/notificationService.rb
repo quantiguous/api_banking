@@ -9,7 +9,7 @@ module ApiBanking
     #getTopics
     module GetTopics
       ReqCriteria = Struct.new(:topicGroup, :subscriber)
-      Subscriber = Struct.new(:customerID, :subscribed, :unsubscribed)
+      Subscriber = Struct.new(:customerID, :accountNo, :subscribed, :unsubscribed)
       Request = Struct.new(:version, :appID, :criteria)
     
       TopicsArray = Struct.new(:topic)
@@ -98,7 +98,8 @@ module ApiBanking
               xml.topicGroup request.criteria.topicGroup unless request.criteria.topicGroup.nil?
               unless request.criteria.subscriber.nil?
                 xml.subscriber do |xml|
-                  xml.customerID request.criteria.subscriber.customerID unless request.criteria.subscriber.customerID.nil?
+                  xml.customerID request.criteria.subscriber.customerID
+                  xml.accountNo request.criteria.subscriber.accountNo
                   xml.subscribed request.criteria.subscriber.subscribed unless request.criteria.subscriber.subscribed.nil?
                   xml.unsubscribed request.criteria.subscriber.unsubscribed unless request.criteria.subscriber.unsubscribed.nil?
                 end
