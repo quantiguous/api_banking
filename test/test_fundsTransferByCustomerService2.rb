@@ -10,21 +10,21 @@ class TestFundsTransferByCustomerService2 < Minitest::Test
     beneficiary = ApiBanking::FundsTransferByCustomerService2::Transfer::Beneficiary.new()
     request = ApiBanking::FundsTransferByCustomerService2::Transfer::Request.new()
 
-    address.address1 = 'Mumbai'
+    address.address1 = 'NEW'
 
-    beneficiary.fullName = 'Quantiguous Solutions'
-    beneficiary.accountNo = '00001234567890'
-    beneficiary.accountIFSC = 'RBIB0123456'
+    beneficiary.fullName = 'DITTO'
+    beneficiary.accountNo = 'EE00'
+    beneficiary.accountIFSC = 'HDFC0123456'
     beneficiary.address = address  # can also be a string
 
     request.uniqueRequestNo = SecureRandom.uuid.gsub!('-','')
-    request.appID = 'APP12'
+    request.appID = 'app14149'
     request.purposeCode = 'PC01'
-    request.customerID = '000000'
-    request.debitAccountNo = '00001234567890'
+    request.customerID = '2424'
+    request.debitAccountNo = '041990600011174'
     request.transferType = 'NEFT'
-    request.transferAmount = 20
-    request.remitterToBeneficiaryInfo = 'FUND TRANSFER'
+    request.transferAmount = 2001
+    request.remitterToBeneficiaryInfo = 'DITTO'
 
     request.beneficiary = beneficiary
     request
@@ -71,5 +71,9 @@ class TestFundsTransferByCustomerService2 < Minitest::Test
     request.AccountNumber = '00001234567890'
 
     puts "#{self.class.name} get_balance: #{ApiBanking::FundsTransferByCustomerService2.get_balance(FundsTransferByCustomerService2Environment, request)}"
+  end
+  
+  def test_it_gives_back_a_start_transfer_result
+    puts "#{self.class.name} startTransfer: #{ApiBanking::FundsTransferByCustomerService2.start_transfer(FundsTransferByCustomerService2Environment, transfer_request)}"
   end
 end

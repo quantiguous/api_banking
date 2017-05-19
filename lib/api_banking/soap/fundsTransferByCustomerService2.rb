@@ -28,6 +28,11 @@ module ApiBanking
       Request = Struct.new(:version, :appID, :customerID, :AccountNumber)
       Result = Struct.new(:Version, :accountCurrencyCode, :accountBalanceAmount, :lowBalanceAlert)
     end
+    
+    #startTransfer
+    module StartTransfer
+      Result = Struct.new(:version, :requestReferenceNo, :uniqueResponseNo, :attemptNo, :reqTransferType, :statusCode, :subStatusCode, :subStatusText)
+    end
 
     def self.transfer(env, request, callbacks = nil)
       reply = do_remote_call(env, callbacks) do |xml|
@@ -103,6 +108,53 @@ module ApiBanking
       parse_reply(:getBalance, reply)
     end
 
+    def self.start_transfer(env, request, callbacks = nil)
+      reply = do_remote_call(env, callbacks) do |xml|
+        xml.startTransfer("xmlns:ns" => SERVICE_NAMESPACE ) do
+          xml.parent.namespace = xml.parent.namespace_definitions.first
+          xml['ns'].version SERVICE_VERSION
+          xml['ns'].uniqueRequestNo request.uniqueRequestNo
+          xml['ns'].appID request.appID
+          xml['ns'].purposeCode request.purposeCode unless request.purposeCode.nil?
+          xml['ns'].customerID request.customerID
+          xml['ns'].debitAccountNo request.debitAccountNo
+          xml['ns'].beneficiary do  |xml|
+            xml.beneficiaryCode request.beneficiary.beneCode unless request.beneficiary.beneCode.nil?
+            unless request.beneficiary.fullName.nil?
+              xml.beneficiaryDetail do |xml|
+                xml.beneficiaryName do |xml|
+                  xml.fullName request.beneficiary.fullName
+                end
+                xml.beneficiaryAddress do |xml|
+                  if request.beneficiary.address.kind_of? Transfer::Address
+                    xml.address1 request.beneficiary.address.address1
+                    xml.address2 request.beneficiary.address.address2 unless request.beneficiary.address.address2.nil?
+                    xml.address3 request.beneficiary.address.address3 unless request.beneficiary.address.address3.nil?
+                    xml.postalCode request.beneficiary.address.postalCode unless request.beneficiary.address.postalCode.nil?
+                    xml.city request.beneficiary.address.city unless request.beneficiary.address.city.nil?
+                    xml.stateOrProvince request.beneficiary.address.stateOrProvince unless request.beneficiary.address.stateOrProvince.nil?
+                    xml.country request.beneficiary.address.country unless request.beneficiary.address.country.nil?
+                  else
+                    xml.address1 request.beneficiary.address
+                  end
+                end
+                xml.beneficiaryContact do |xml|
+                end
+                xml.beneficiaryAccountNo request.beneficiary.accountNo
+                xml.beneficiaryIFSC request.beneficiary.accountIFSC
+              end
+            end
+          end
+          xml.transferType request.transferType
+          xml.transferCurrencyCode 'INR'
+          xml.transferAmount request.transferAmount
+          xml.remitterToBeneficiaryInfo request.remitterToBeneficiaryInfo
+        end
+      end
+
+      parse_reply(:startTransfer, reply)
+    end
+
     private
 
     def self.uri()
@@ -151,6 +203,17 @@ module ApiBanking
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountCurrencyCode', 'ns' => SERVICE_NAMESPACE)),
               BigDecimal.new(content_at(reply.at_xpath('//ns:getBalanceResponse/ns:accountBalanceAmount', 'ns' => SERVICE_NAMESPACE))),
               content_at(reply.at_xpath('//ns:getBalanceResponse/ns:lowBalanceAlert', 'ns' => SERVICE_NAMESPACE))
+            )
+          when :startTransfer
+            return StartTransfer::Result.new(
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:version', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:requestReferenceNo', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:uniqueResponseNo', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:attemptNo', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:reqTransferType', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:statusCode', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:subStatusCode', 'ns' => SERVICE_NAMESPACE)),
+              content_at(reply.at_xpath('//ns:startTransferResponse/ns:subStatusText', 'ns' => SERVICE_NAMESPACE))
             )
         end
       end
