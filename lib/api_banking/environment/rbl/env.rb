@@ -9,7 +9,8 @@ module ApiBanking
             SinglePayment: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/payments/corp/payment',
             AccountStatement: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/cas/statement',
             GetAccountBalance: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/accounts/balance/query',
-            GetPaymentStatus: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/payments/corp/payment/query'
+            GetPaymentStatus: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/payments/corp/payment/query',
+            PanInquiry: 'https://apideveloper.rblbank.com/test/sb/rbl/v1/PAN/Without_User_ID'
           }
         end
       end

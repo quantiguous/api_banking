@@ -29,6 +29,7 @@ require_relative "api_banking/json/singlePayment"
 require_relative "api_banking/json/accountStatement"
 require_relative "api_banking/json/getAccountBalance"
 require_relative "api_banking/json/getPaymentStatus"
+require_relative "api_banking/json/panInquiry"
 
 module ApiBanking
 
